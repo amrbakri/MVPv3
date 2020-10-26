@@ -110,10 +110,6 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
         this.mMainActivityWeakReference.get().startService(intent);
     }
 
-    private boolean isLoginProcessInProgress() {
-        return false;
-    }
-
     private void hideProgressBar() {
         this.mMainActivityWeakReference.get().onProgressBarVisibilitySetToGone();
     }
@@ -165,11 +161,6 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
     }
 
     public void onResume() {
-        if (!isLoginProcessInProgress()) {
-            hideProgressBar();
-        } else {
-            showProgressBar();
-        }
     }
 
     public void onPause() {
@@ -208,22 +199,22 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
             switch (resultCode) {
                 case Activity.RESULT_OK:
                     switch (backendToPresenterSentResult) {
-                        case BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_ERROR:
-                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_ERROR);
+                        case BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_ERROR:
+                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_ERROR);
                             onAuthenticationError();
                             break;
-                        case BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_SUCCESSFUL:
-                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_SUCCESSFUL);
+                        case BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_SUCCESSFUL:
+                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_SUCCESSFUL);
                             onAuthenticationSuccessful();
                             break;
-                        case BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_FAILED:
-                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_FAILED);
+                        case BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_FAILED:
+                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_FAILED);
                             onAuthenticationFailed();
                             break;
-                        case BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_UNKNOWN:
-                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_UNKNOWN);
+                        /*case BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_UNKNOWN:
+                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_UNKNOWN);
                             onAuthenticationUnknown();
-                            break;
+                            break;*/
                     }
                     break;
 
