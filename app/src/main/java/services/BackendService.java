@@ -175,9 +175,9 @@ public class BackendService extends IntentService {
                             }
                             Log.v(BackendService.TAG + "." + this.TAG, "waiting for authenticating user: " + (i + 1) + " seconds");
                         }
-                        Log.d(BackendService.TAG + "." + this.TAG, "authentication process took: " + authenticationElapsedTime + " seconds");
+                        //Log.d(BackendService.TAG + "." + this.TAG, "authentication process took: " + authenticationElapsedTime + " seconds");
 
-                        authenticationResult = random.nextInt(4);
+                        authenticationResult = random.nextInt(3);
                         switch (authenticationResult) {
                             case 0:
                                 Log.i(BackendService.TAG + "." + this.TAG, "authentication process result: " + AuthenticationResult.ERROR.bytName());
