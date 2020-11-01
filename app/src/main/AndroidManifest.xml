@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name="services.BackendService"
+        <service android:name="services.BackendAuthenticationService"
             android:exported="false"
             />
     </application>
