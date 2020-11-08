@@ -159,7 +159,7 @@ public class BackendAuthenticationService extends IntentService {
                 Log.d(BackendAuthenticationService.TAG + "." + this.TAG, "op: "+ op);
 
                 switch (op) {
-                    case MainActivity.INTENT_KEY_START_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS:
+                    case MainActivity.INTENT_VALUE_START_BACKEND_SERVICE_FOR_AUTHENTICATING_PROCESS:
                         int authenticationElapsedTime = random.nextInt(4) + 2;
                         for (int i = 0; i < authenticationElapsedTime; i++) {
                             try {
