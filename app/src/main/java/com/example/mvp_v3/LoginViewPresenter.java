@@ -40,7 +40,6 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
         Button onInitializingButtonLogin();
         TextView onInitializingTextViewBackendResult();
         ProgressBar onInitializingProgressBar();
-        Intent onInitializingIntentBackendService();
     }
 
     interface IProgressBarVisibilitySwitch {

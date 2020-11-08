@@ -78,11 +78,6 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
         return this.mProgressBarLoginInProgress = findViewById(R.id.progressBarLoginInProgress);
     }
 
-    @Override
-    public Intent onInitializingIntentBackendService() {
-        return this.mIntentStartBackendAuthenticationService = new Intent(this, BackendAuthenticationService.class);
-    }
-
     //#implementation of LoginViewPresenter.IProgressBarVisibilitySwitch
     @Override
     public void onProgressBarVisibilitySetToVisible() {
