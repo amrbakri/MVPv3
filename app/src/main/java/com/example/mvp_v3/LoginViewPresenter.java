@@ -185,6 +185,7 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
             Log.d(LoginViewPresenter.TAG + "." + TAG, "onReceiveResult");
             String backendToPresenterSentResult = resultData.getString(BackendAuthenticationService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND);
 
+            mMainActivityWeakReference.get().onProgressBarVisibilitySetToGone();
             switch (resultCode) {
                 case Activity.RESULT_OK:
                     switch (backendToPresenterSentResult) {

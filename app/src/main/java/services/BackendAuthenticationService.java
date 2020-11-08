@@ -11,7 +11,6 @@ import android.os.Message;
 import android.os.ResultReceiver;
 import android.util.Log;
 
-import com.example.mvp_v3.LoginViewPresenter;
 import com.example.mvp_v3.MainActivity;
 
 import java.lang.ref.WeakReference;
@@ -76,7 +75,7 @@ public class BackendAuthenticationService extends IntentService {
         this.mConsumerHandlerThread.start();
         this.mConsumerHandlerThread.initializeHandler();
         Bundle extras = intent.getExtras();
-        String token = extras.getString(MainActivity.INTENT_KEY_START_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS_RESULT);
+        String token = extras.getString(MainActivity.INTENT_KEY_START_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS);
         mResultReceiverListener = intent.getParcelableExtra(BackendAuthenticationService.INTENT_KEY_FOR_RESULT_RECEIVER);
         this.mConsumerHandlerThread.enqueueMessage(token);
     }
@@ -157,8 +156,10 @@ public class BackendAuthenticationService extends IntentService {
                 int authenticationResult;
                 Random random = new Random();
 
+                Log.d(BackendAuthenticationService.TAG + "." + this.TAG, "op: "+ op);
+
                 switch (op) {
-                    case MainActivity.INTENT_KEY_START_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS_RESULT:
+                    case MainActivity.INTENT_KEY_START_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS:
                         int authenticationElapsedTime = random.nextInt(4) + 2;
                         for (int i = 0; i < authenticationElapsedTime; i++) {
                             try {

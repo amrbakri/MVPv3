@@ -21,8 +21,8 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
         LoginViewPresenter.IAuthenticationResult,
         LoginViewPresenter.IConfigureAndStatesOfBackendAuthenticationService {
 
-    public final static String INTENT_KEY_START_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS_RESULT = "KEY_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS_RESULT";
-    public final static String INTENT_VALUE_START_BACKEND_SERVICE_FOR_AUTHENTICATING_PROCESS_START = "VALUE_START_BACKEND_SERVICE_FOR_AUTHENTICATING_PROCESS";
+    public final static String INTENT_KEY_START_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS = "KEY_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS";
+    public final static String INTENT_VALUE_START_BACKEND_SERVICE_FOR_AUTHENTICATING_PROCESS = "VALUE_START_BACKEND_SERVICE_FOR_AUTHENTICATING_PROCESS";
 
     //member variables
     protected LoginViewPresenter mLoginViewPresenter = null;
@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
     @Override
     public void onConfigureIntentForStartingBackendAuthenticationServiceWith(ResultReceiver resultReceiver) {
         mIntentStartBackendAuthenticationService = new Intent(this, BackendAuthenticationService.class);
-        mIntentStartBackendAuthenticationService.putExtra(INTENT_KEY_START_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS_RESULT, INTENT_VALUE_START_BACKEND_SERVICE_FOR_AUTHENTICATING_PROCESS_START);
+        mIntentStartBackendAuthenticationService.putExtra(INTENT_KEY_START_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS, INTENT_VALUE_START_BACKEND_SERVICE_FOR_AUTHENTICATING_PROCESS);
         mIntentStartBackendAuthenticationService.putExtra(BackendAuthenticationService.INTENT_KEY_FOR_RESULT_RECEIVER, resultReceiver);
     }
 
