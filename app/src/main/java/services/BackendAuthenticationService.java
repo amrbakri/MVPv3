@@ -188,9 +188,10 @@ public class BackendAuthenticationService extends IntentService {
                                 bundle.putInt(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_DECLARATION_OF_AUTHENTICATION_RESULT, AuthenticationResult.FAILED.byNum());
                                 break;
                             default:
-                                Log.e(BackendAuthenticationService.TAG + "." + this.TAG, "UNHANDLED_CASE. Backend service can deliver back result either " +
-                                        "Successful, Failed or Error.");
-                                //backend service must be terminated
+                                Log.e(BackendAuthenticationService.TAG + "." + this.TAG, "UNHANDLED_CASE. Backend service can deliver back results either " +
+                                        "Successful, Failed or Error. Backend service will be quite-safely");
+                                quitSafely();
+
                                 break;
                         }
                         msg.setData(bundle);
