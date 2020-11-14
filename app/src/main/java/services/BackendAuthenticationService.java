@@ -45,6 +45,10 @@ public class BackendAuthenticationService extends IntentService {
     private static final String QUIT = "quit consumer handler";
     private static final String QUIT_SAFELY = "quit consumer handler safely";
 
+    private static final int AUTHENTICATION_RESULT_IS_ERROR = 0;
+    private static final int AUTHENTICATION_RESULT_IS_SUCCESSFUL = 1;
+    private static final int AUTHENTICATION_RESULT_IS_FAILED = 2;
+
     //#member variables
     private ConsumerHandlerThread mConsumerHandlerThread = null;
     private Handler mMyProducerHandler = null;
@@ -171,22 +175,18 @@ public class BackendAuthenticationService extends IntentService {
 
                         authenticationResult = random.nextInt(3);
                         switch (authenticationResult) {
-                            case 0:
+                            case AUTHENTICATION_RESULT_IS_ERROR:
                                 Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "authentication process result: " + AuthenticationResult.ERROR.bytName());
                                 bundle.putInt(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_DECLARATION_OF_AUTHENTICATION_RESULT, AuthenticationResult.ERROR.byNum());
                                 break;
-                            case 1:
+                            case AUTHENTICATION_RESULT_IS_SUCCESSFUL:
                                 Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "authentication process result: " + AuthenticationResult.SUCCESSFUL.bytName());
                                 bundle.putInt(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_DECLARATION_OF_AUTHENTICATION_RESULT, AuthenticationResult.SUCCESSFUL.byNum());
                                 break;
-                            case 2:
+                            case AUTHENTICATION_RESULT_IS_FAILED:
                                 Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "authentication process result: " + AuthenticationResult.FAILED.bytName());
                                 bundle.putInt(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_DECLARATION_OF_AUTHENTICATION_RESULT, AuthenticationResult.FAILED.byNum());
                                 break;
-                            /*case 3:
-                                Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "authentication process result: " + AuthenticationResult.UNKNOWN.bytName());
-                                bundle.putInt(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_DECLARATION_OF_AUTHENTICATION_RESULT, AuthenticationResult.UNKNOWN.byNum());
-                                break;*/
                             default:
                                 Log.e(BackendAuthenticationService.TAG + "." + this.TAG, "UNHANDLED_CASE. Backend service can deliver back result either " +
                                         "Successful, Failed or Error.");
