@@ -88,7 +88,7 @@ public class BackendAuthenticationService extends IntentService {
     private class ConsumerHandlerThread extends HandlerThread {
 
         private final String TAG = ConsumerHandlerThread.class.getSimpleName();
-        private MyBackendHandler mMyConsumerHandler = null;
+        private MyBackendHandler mMyBackendHandler = null;
 
         public ConsumerHandlerThread(String name) {
             super(name);
@@ -98,11 +98,11 @@ public class BackendAuthenticationService extends IntentService {
             while (this.getLooper() == null) {
                 onLooperPrepared();
             }
-            this.mMyConsumerHandler = new MyBackendHandler(this.getLooper());
+            this.mMyBackendHandler = new MyBackendHandler(this.getLooper());
         }
 
         public MyBackendHandler getInstanceOfConsumerHandler() {
-            return this.mMyConsumerHandler;
+            return this.mMyBackendHandler;
         }
 
         @Override
@@ -119,8 +119,8 @@ public class BackendAuthenticationService extends IntentService {
             //#Messages creation
             Message msg = Message.obtain();
             msg.obj = token;
-            msg.setTarget(mMyConsumerHandler);
-            this.mMyConsumerHandler.sendMessage(msg);
+            msg.setTarget(mMyBackendHandler);
+            this.mMyBackendHandler.sendMessage(msg);
         }
 
         @Override
