@@ -17,6 +17,7 @@ import services.BackendAuthenticationService;
 
 public class MainActivity extends AppCompatActivity implements LoginViewPresenter.IObjectsInitializer,
         LoginViewPresenter.IProgressBarVisibilitySwitch,
+        LoginViewPresenter.ITextViewVisibilitySwitch,
         LoginViewPresenter.IUserCredentialsValidationService,
         LoginViewPresenter.IAuthenticationResult,
         LoginViewPresenter.IConfigureAndStatesOfBackendAuthenticationService {
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
         return this.mBtnLogin = findViewById(R.id.btnLogin);
     }
 
-    public TextView onInitializingTextViewBackendResult() {
+    public TextView onInitializingTextViewForBackendResult() {
         return this.mTextViewBackendResult = findViewById(R.id.tvBackendResult);
     }
 
@@ -87,6 +88,17 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
     @Override
     public void onProgressBarVisibilitySetToGone() {
         this.mProgressBarLoginInProgress.setVisibility(View.GONE);
+    }
+
+    //#implementation of LoginViewPresenter.ITextViewVisibilitySwitch
+    @Override
+    public void onTextViewVisibilitySetToVisible() {
+        this.mTextViewBackendResult.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onTextViewVisibilitySetToGone() {
+        this.mTextViewBackendResult.setVisibility(View.GONE);
     }
 
     //#implementation of LoginViewPresenter.IUserCredentialsValidationService
@@ -131,16 +143,19 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
     @Override
     public void onAuthenticationError(String resultMsg) {
         this.mTextViewBackendResult.setText(resultMsg);
+        this.activateLoginButton();
     }
 
     @Override
     public void onAuthenticationSuccessful(String resultMsg) {
         this.mTextViewBackendResult.setText(resultMsg);
+        this.activateLoginButton();
     }
 
     @Override
     public void onAuthenticationFailed(String resultMsg) {
         this.mTextViewBackendResult.setText(resultMsg);
+        this.activateLoginButton();
     }
 
     //#Lifcycle callbacks

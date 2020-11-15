@@ -27,15 +27,16 @@ public class BackendAuthenticationService extends IntentService {
     public static final String INTENT_KEY_FOR_RESULT_RECEIVER = "result receiver listener";
     private static final String BUNDLE_KEY_BACKEND_TO_FRONTEND_DECLARATION_OF_AUTHENTICATION_RESULT = "on authentication result issued";
 
-    private static final String BUNDLE_KEY_BACKEND_TO_FRONTEND_POST_ACKNOWLEDGMENT_OF_AUTHENTICATION_RESULT = "frontend reply to backend on authentication result issued";
-    private static final String MSG_TITLE_FRONTEND_TO_BACKEND_ACKNOWLEDGEMENT_FOR_AUTHENTICATION_RESULT_IS_SUCCESSFUL = "onSuccessful";
-    private static final String MSG_TITLE_FRONTEND_TO_BACKEND_ACKNOWLEDGEMENT_FOR_AUTHENTICATION_RESULT_IS_FAILED = "onFailed";
-    private static final String MSG_TITLE_FRONTEND_TO_BACKEND_ACKNOWLEDGEMENT_FOR_AUTHENTICATION_RESULT_IS_ERROR = "onError";
+    private static final String BUNDLE_KEY_FRONTEND_TO_BACKEND_ACKNOWLEDGMENT_OF_RECEIPT_OF_AUTHENTICATION_RESULT = "frontend acknowledge of receipt of results from backend";
+    private static final String BUNDLE_KEY_BACKEND_TO_FRONTEND_POST_RECEIPT_ACKNOWLEDGMENT_FROM_FRONTEND = "frontend reply to backend on authentication result issued";
+    private static final String ACKNOWLEDGEMENT_OF_AUTHENTICATION_RESULT_IS_SUCCESSFUL = "onSuccessful";
+    private static final String ACKNOWLEDGEMENT_OF_AUTHENTICATION_RESULT_IS_FAILED = "onFailed";
+    private static final String ACKNOWLEDGEMENT_OF_AUTHENTICATION_RESULT_IS_ERROR = "onError";
 
-    public static final String BUNDLE_KEY_ON_RESULT_RECEIVER_SEND = "onResultReceiver sends";
-    public static final String BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_ERROR = "onResultReceiver sends call onError";
-    public static final String BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_SUCCESSFUL = "onResultReceiver sends call onSuccessful";
-    public static final String BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_FAILED = "onResultReceiver sends call onFailed";
+    public static final String BUNDLE_KEY_RESULT_RECEIVER_TO_SEND_AUTHENTICATION_RESULT_TO_LOGIN_VIEW_PRESENTER = "onResultReceiver sends";
+    public static final String BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_ERROR = "onResultReceiver sends call onError";
+    public static final String BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_SUCCESSFUL = "onResultReceiver sends call onSuccessful";
+    public static final String BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_FAILED = "onResultReceiver sends call onFailed";
     public static final String BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_RESULT_CANCELED = "onResultReceiver sends RESULT_CANCELED";
 
     private static final String BUNDLE_VALUE_ON_AUTHENTICATION_ERROR = "presenter to call onError";
@@ -198,25 +199,25 @@ public class BackendAuthenticationService extends IntentService {
                         msg.sendToTarget();
                         break;
 
-                    case BackendAuthenticationService.MSG_TITLE_FRONTEND_TO_BACKEND_ACKNOWLEDGEMENT_FOR_AUTHENTICATION_RESULT_IS_ERROR:
-                        Log.w(BackendAuthenticationService.TAG + "." + this.TAG, "call" + " " + BackendAuthenticationService.MSG_TITLE_FRONTEND_TO_BACKEND_ACKNOWLEDGEMENT_FOR_AUTHENTICATION_RESULT_IS_ERROR);
-                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_POST_ACKNOWLEDGMENT_OF_AUTHENTICATION_RESULT,
+                    case BackendAuthenticationService.ACKNOWLEDGEMENT_OF_AUTHENTICATION_RESULT_IS_ERROR:
+                        Log.w(BackendAuthenticationService.TAG + "." + this.TAG, "call" + " " + BackendAuthenticationService.ACKNOWLEDGEMENT_OF_AUTHENTICATION_RESULT_IS_ERROR);
+                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_POST_RECEIPT_ACKNOWLEDGMENT_FROM_FRONTEND,
                                 BackendAuthenticationService.BUNDLE_VALUE_ON_AUTHENTICATION_ERROR);
                         msg.setData(bundle);
                         msg.sendToTarget();
                         break;
 
-                    case BackendAuthenticationService.MSG_TITLE_FRONTEND_TO_BACKEND_ACKNOWLEDGEMENT_FOR_AUTHENTICATION_RESULT_IS_SUCCESSFUL:
-                        Log.w(BackendAuthenticationService.TAG + "." + this.TAG, "call" + " " + BackendAuthenticationService.MSG_TITLE_FRONTEND_TO_BACKEND_ACKNOWLEDGEMENT_FOR_AUTHENTICATION_RESULT_IS_SUCCESSFUL);
-                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_POST_ACKNOWLEDGMENT_OF_AUTHENTICATION_RESULT,
+                    case BackendAuthenticationService.ACKNOWLEDGEMENT_OF_AUTHENTICATION_RESULT_IS_SUCCESSFUL:
+                        Log.w(BackendAuthenticationService.TAG + "." + this.TAG, "call" + " " + BackendAuthenticationService.ACKNOWLEDGEMENT_OF_AUTHENTICATION_RESULT_IS_SUCCESSFUL);
+                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_POST_RECEIPT_ACKNOWLEDGMENT_FROM_FRONTEND,
                                 BackendAuthenticationService.BUNDLE_VALUE_ON_AUTHENTICATION_SUCCESSFUL);
                         msg.setData(bundle);
                         msg.sendToTarget();
                         break;
 
-                    case BackendAuthenticationService.MSG_TITLE_FRONTEND_TO_BACKEND_ACKNOWLEDGEMENT_FOR_AUTHENTICATION_RESULT_IS_FAILED:
-                        Log.w(BackendAuthenticationService.TAG + "." + this.TAG, "call" + " " + MSG_TITLE_FRONTEND_TO_BACKEND_ACKNOWLEDGEMENT_FOR_AUTHENTICATION_RESULT_IS_FAILED);
-                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_POST_ACKNOWLEDGMENT_OF_AUTHENTICATION_RESULT,
+                    case BackendAuthenticationService.ACKNOWLEDGEMENT_OF_AUTHENTICATION_RESULT_IS_FAILED:
+                        Log.w(BackendAuthenticationService.TAG + "." + this.TAG, "call" + " " + ACKNOWLEDGEMENT_OF_AUTHENTICATION_RESULT_IS_FAILED);
+                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_POST_RECEIPT_ACKNOWLEDGMENT_FROM_FRONTEND,
                                 BackendAuthenticationService.BUNDLE_VALUE_ON_AUTHENTICATION_FAILED);
                         msg.setData(bundle);
                         msg.sendToTarget();
@@ -263,7 +264,7 @@ public class BackendAuthenticationService extends IntentService {
         public boolean handleMessage(@NonNull Message message) {
             Bundle data = message.getData();
             boolean op1 = data.containsKey(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_DECLARATION_OF_AUTHENTICATION_RESULT);
-            boolean op2 = data.containsKey(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_POST_ACKNOWLEDGMENT_OF_AUTHENTICATION_RESULT);
+            boolean op2 = data.containsKey(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_POST_RECEIPT_ACKNOWLEDGMENT_FROM_FRONTEND);
             Message msg = new Message();
             msg.setTarget(mBackendHandlerThread.getInstanceOfConsumerHandler());
             Bundle bundle = new Bundle();
@@ -273,71 +274,63 @@ public class BackendAuthenticationService extends IntentService {
                 switch (backendAuthenticationResult) {
                     case AUTHENTICATION_RESULT_IS_ERROR:
                         Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "AUTHENTICATION ERROR");
-                        msg.obj = BackendAuthenticationService.MSG_TITLE_FRONTEND_TO_BACKEND_ACKNOWLEDGEMENT_FOR_AUTHENTICATION_RESULT_IS_ERROR;
-                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_POST_ACKNOWLEDGMENT_OF_AUTHENTICATION_RESULT,
-                                BackendAuthenticationService.MSG_TITLE_FRONTEND_TO_BACKEND_ACKNOWLEDGEMENT_FOR_AUTHENTICATION_RESULT_IS_ERROR);
+                        msg.obj = BackendAuthenticationService.ACKNOWLEDGEMENT_OF_AUTHENTICATION_RESULT_IS_ERROR;
+                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_FRONTEND_TO_BACKEND_ACKNOWLEDGMENT_OF_RECEIPT_OF_AUTHENTICATION_RESULT,
+                                BackendAuthenticationService.ACKNOWLEDGEMENT_OF_AUTHENTICATION_RESULT_IS_ERROR);
                         break;
 
                     case AUTHENTICATION_RESULT_IS_SUCCESSFUL:
                         Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "AUTHENTICATION SUCCESSFUL");
-                        msg.obj = BackendAuthenticationService.MSG_TITLE_FRONTEND_TO_BACKEND_ACKNOWLEDGEMENT_FOR_AUTHENTICATION_RESULT_IS_SUCCESSFUL;
-                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_POST_ACKNOWLEDGMENT_OF_AUTHENTICATION_RESULT,
-                                BackendAuthenticationService.MSG_TITLE_FRONTEND_TO_BACKEND_ACKNOWLEDGEMENT_FOR_AUTHENTICATION_RESULT_IS_SUCCESSFUL);
+                        msg.obj = BackendAuthenticationService.ACKNOWLEDGEMENT_OF_AUTHENTICATION_RESULT_IS_SUCCESSFUL;
+                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_FRONTEND_TO_BACKEND_ACKNOWLEDGMENT_OF_RECEIPT_OF_AUTHENTICATION_RESULT,
+                                BackendAuthenticationService.ACKNOWLEDGEMENT_OF_AUTHENTICATION_RESULT_IS_SUCCESSFUL);
                         break;
 
                     case AUTHENTICATION_RESULT_IS_FAILED:
                         Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "AUTHENTICATION FAILED");
-                        msg.obj = BackendAuthenticationService.MSG_TITLE_FRONTEND_TO_BACKEND_ACKNOWLEDGEMENT_FOR_AUTHENTICATION_RESULT_IS_FAILED;
-                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_POST_ACKNOWLEDGMENT_OF_AUTHENTICATION_RESULT,
-                                BackendAuthenticationService.MSG_TITLE_FRONTEND_TO_BACKEND_ACKNOWLEDGEMENT_FOR_AUTHENTICATION_RESULT_IS_FAILED);
+                        msg.obj = BackendAuthenticationService.ACKNOWLEDGEMENT_OF_AUTHENTICATION_RESULT_IS_FAILED;
+                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_FRONTEND_TO_BACKEND_ACKNOWLEDGMENT_OF_RECEIPT_OF_AUTHENTICATION_RESULT,
+                                BackendAuthenticationService.ACKNOWLEDGEMENT_OF_AUTHENTICATION_RESULT_IS_FAILED);
                         break;
 
                     default:
                 }
             } else if (op2) {
-                String res = data.getString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_POST_ACKNOWLEDGMENT_OF_AUTHENTICATION_RESULT);
+                String res = data.getString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_POST_RECEIPT_ACKNOWLEDGMENT_FROM_FRONTEND);
                 Bundle bundleResRec = null;
                 switch (res) {
                     case BackendAuthenticationService.BUNDLE_VALUE_ON_AUTHENTICATION_ERROR:
                         Log.i(BackendAuthenticationService.TAG + "." + this.TAG, BUNDLE_VALUE_ON_AUTHENTICATION_ERROR);
                         bundleResRec = new Bundle();
-                        bundleResRec.putString(BackendAuthenticationService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND,
-                                BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_ERROR);
+                        bundleResRec.putString(BackendAuthenticationService.BUNDLE_KEY_RESULT_RECEIVER_TO_SEND_AUTHENTICATION_RESULT_TO_LOGIN_VIEW_PRESENTER,
+                                BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_ERROR);
                         mResultReceiverListener.send(Activity.RESULT_OK, bundleResRec);
                         break;
 
                     case BackendAuthenticationService.BUNDLE_VALUE_ON_AUTHENTICATION_SUCCESSFUL:
                         Log.i(BackendAuthenticationService.TAG + "." + this.TAG, BUNDLE_VALUE_ON_AUTHENTICATION_SUCCESSFUL);
                         bundleResRec = new Bundle();
-                        bundleResRec.putString(BackendAuthenticationService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND,
-                                BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_SUCCESSFUL);
+                        bundleResRec.putString(BackendAuthenticationService.BUNDLE_KEY_RESULT_RECEIVER_TO_SEND_AUTHENTICATION_RESULT_TO_LOGIN_VIEW_PRESENTER,
+                                BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_SUCCESSFUL);
                         mResultReceiverListener.send(Activity.RESULT_OK, bundleResRec);
                         break;
 
                     case BackendAuthenticationService.BUNDLE_VALUE_ON_AUTHENTICATION_FAILED:
                         Log.i(BackendAuthenticationService.TAG + "." + this.TAG, BUNDLE_VALUE_ON_AUTHENTICATION_FAILED);
                         bundleResRec = new Bundle();
-                        bundleResRec.putString(BackendAuthenticationService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND,
-                                BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_FAILED);
+                        bundleResRec.putString(BackendAuthenticationService.BUNDLE_KEY_RESULT_RECEIVER_TO_SEND_AUTHENTICATION_RESULT_TO_LOGIN_VIEW_PRESENTER,
+                                BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_FAILED);
                         mResultReceiverListener.send(Activity.RESULT_OK, bundleResRec);
                         break;
 
-                    /*case BackendAuthenticationService.BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_UNKNOWN:
-                        Log.i(BackendAuthenticationService.TAG + "." + this.TAG, BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_UNKNOWN);
-                        bundleResRec = new Bundle();
-                        bundleResRec.putString(BackendAuthenticationService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND,
-                                BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_UNKNOWN);
-                        mResultReceiverListener.send(Activity.RESULT_OK, bundleResRec);
-                        break;*/
-
                     default:
                         bundleResRec = new Bundle();
-                        bundleResRec.putString(BackendAuthenticationService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND,
+                        bundleResRec.putString(BackendAuthenticationService.BUNDLE_KEY_RESULT_RECEIVER_TO_SEND_AUTHENTICATION_RESULT_TO_LOGIN_VIEW_PRESENTER,
                                 BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_RESULT_CANCELED);
                         mResultReceiverListener.send(Activity.RESULT_CANCELED, bundleResRec);
 
                 }
-                msg.obj = BackendAuthenticationService.QUIT;
+                msg.obj = BackendAuthenticationService.QUIT_SAFELY;
             }
             msg.setData(bundle);
             msg.sendToTarget();

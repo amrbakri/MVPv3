@@ -38,13 +38,18 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
         EditText onInitializingETUserName();
         EditText onInitializingETUserPassword();
         Button onInitializingButtonLogin();
-        TextView onInitializingTextViewBackendResult();
+        TextView onInitializingTextViewForBackendResult();
         ProgressBar onInitializingProgressBar();
     }
 
     interface IProgressBarVisibilitySwitch {
         void onProgressBarVisibilitySetToVisible();
         void onProgressBarVisibilitySetToGone();
+    }
+
+    interface ITextViewVisibilitySwitch {
+        void onTextViewVisibilitySetToVisible();
+        void onTextViewVisibilitySetToGone();
     }
 
     interface IUserCredentialsValidationService {
@@ -114,26 +119,29 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
         this.mETUserName = this.mMainActivityWeakReference.get().onInitializingETUserName();
         this.mETUserPassword = this.mMainActivityWeakReference.get().onInitializingETUserPassword();
         this.mBtnLogin = this.mMainActivityWeakReference.get().onInitializingButtonLogin();
-        this.mTextViewBackendResult = this.mMainActivityWeakReference.get().onInitializingTextViewBackendResult();
+        this.mTextViewBackendResult = this.mMainActivityWeakReference.get().onInitializingTextViewForBackendResult();
         this.mProgressBarForLoginInProgress = this.mMainActivityWeakReference.get().onInitializingProgressBar();
     }
 
     private void onAuthenticationError(String errorMsg) {
-        mMainActivityWeakReference.get().onProgressBarVisibilitySetToGone();
-        mMainActivityWeakReference.get().onAuthenticationError(errorMsg);
         mMainActivityWeakReference.get().onStopBackendAuthenticationService();
+        mMainActivityWeakReference.get().onProgressBarVisibilitySetToGone();
+        mMainActivityWeakReference.get().onTextViewVisibilitySetToVisible();
+        mMainActivityWeakReference.get().onAuthenticationError(errorMsg);
     }
 
     private void onAuthenticationSuccessful(String resultMsg) {
-        mMainActivityWeakReference.get().onProgressBarVisibilitySetToGone();
-        mMainActivityWeakReference.get().onAuthenticationSuccessful(resultMsg);
         mMainActivityWeakReference.get().onStopBackendAuthenticationService();
+        mMainActivityWeakReference.get().onProgressBarVisibilitySetToGone();
+        mMainActivityWeakReference.get().onTextViewVisibilitySetToVisible();
+        mMainActivityWeakReference.get().onAuthenticationSuccessful(resultMsg);
     }
 
     private void onAuthenticationFailed(String failureMsg) {
-        mMainActivityWeakReference.get().onProgressBarVisibilitySetToGone();
-        mMainActivityWeakReference.get().onAuthenticationFailed(failureMsg);
         mMainActivityWeakReference.get().onStopBackendAuthenticationService();
+        mMainActivityWeakReference.get().onProgressBarVisibilitySetToGone();
+        mMainActivityWeakReference.get().onTextViewVisibilitySetToVisible();
+        mMainActivityWeakReference.get().onAuthenticationFailed(failureMsg);
     }
 
     //#Lifecycle callbacks
@@ -183,22 +191,22 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             super.onReceiveResult(resultCode, resultData);
             Log.d(LoginViewPresenter.TAG + "." + TAG, "onReceiveResult");
-            String backendToPresenterSentResult = resultData.getString(BackendAuthenticationService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND);
+            String backendToPresenterSentResult = resultData.getString(BackendAuthenticationService.BUNDLE_KEY_RESULT_RECEIVER_TO_SEND_AUTHENTICATION_RESULT_TO_LOGIN_VIEW_PRESENTER);
 
             mMainActivityWeakReference.get().onProgressBarVisibilitySetToGone();
             switch (resultCode) {
                 case Activity.RESULT_OK:
                     switch (backendToPresenterSentResult) {
-                        case BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_ERROR:
-                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_ERROR);
+                        case BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_ERROR:
+                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_ERROR);
                             onAuthenticationError("Connection terminated unexpectedly. Try again.");
                             break;
-                        case BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_SUCCESSFUL:
-                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_SUCCESSFUL);
+                        case BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_SUCCESSFUL:
+                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_SUCCESSFUL);
                             onAuthenticationSuccessful("Authentication_Successful.");
                             break;
-                        case BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_FAILED:
-                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_FAILED);
+                        case BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_FAILED:
+                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_FAILED);
                             onAuthenticationFailed("User can not be authenticated. Invalid user credentials provided.");
                             break;
                     }
