@@ -47,6 +47,11 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
         void onProgressBarVisibilitySetToGone();
     }
 
+    interface ILoginButtonEnableState {
+        void onLoginButtonEnabled();
+        void onLoginButtonDisabled();
+    }
+
     interface ITextViewVisibilitySwitch {
         void onTextViewVisibilitySetToVisible();
         void onTextViewVisibilitySetToGone();
@@ -108,6 +113,7 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
         UserCredentialsValidationService userCredentialsValidationService = new UserCredentialsValidationService(this, userName, userPassword);
         if (userCredentialsValidationService.getCredentialsValidityStateTo() == true) {
             //do connect to backend for authenticating users' credentials
+            this.mMainActivityWeakReference.get().onLoginButtonDisabled();
             this.mMainActivityWeakReference.get().onConfigureIntentForStartingBackendAuthenticationServiceWith(new LoginViewPresenter.MyResultReceiver(new Handler()));
             this.mMainActivityWeakReference.get().onStartBackendAuthenticationService();
             mMainActivityWeakReference.get().onProgressBarVisibilitySetToVisible();
@@ -126,6 +132,7 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
     private void onAuthenticationError(String errorMsg) {
         mMainActivityWeakReference.get().onStopBackendAuthenticationService();
         mMainActivityWeakReference.get().onProgressBarVisibilitySetToGone();
+        this.mMainActivityWeakReference.get().onLoginButtonEnabled();
         mMainActivityWeakReference.get().onTextViewVisibilitySetToVisible();
         mMainActivityWeakReference.get().onAuthenticationError(errorMsg);
     }
@@ -133,6 +140,7 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
     private void onAuthenticationSuccessful(String resultMsg) {
         mMainActivityWeakReference.get().onStopBackendAuthenticationService();
         mMainActivityWeakReference.get().onProgressBarVisibilitySetToGone();
+        this.mMainActivityWeakReference.get().onLoginButtonEnabled();
         mMainActivityWeakReference.get().onTextViewVisibilitySetToVisible();
         mMainActivityWeakReference.get().onAuthenticationSuccessful(resultMsg);
     }
@@ -140,6 +148,7 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
     private void onAuthenticationFailed(String failureMsg) {
         mMainActivityWeakReference.get().onStopBackendAuthenticationService();
         mMainActivityWeakReference.get().onProgressBarVisibilitySetToGone();
+        this.mMainActivityWeakReference.get().onLoginButtonEnabled();
         mMainActivityWeakReference.get().onTextViewVisibilitySetToVisible();
         mMainActivityWeakReference.get().onAuthenticationFailed(failureMsg);
     }

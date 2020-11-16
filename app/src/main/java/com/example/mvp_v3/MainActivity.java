@@ -17,6 +17,7 @@ import services.BackendAuthenticationService;
 
 public class MainActivity extends AppCompatActivity implements LoginViewPresenter.IObjectsInitializer,
         LoginViewPresenter.IProgressBarVisibilitySwitch,
+        LoginViewPresenter.ILoginButtonEnableState,
         LoginViewPresenter.ITextViewVisibilitySwitch,
         LoginViewPresenter.IUserCredentialsValidationService,
         LoginViewPresenter.IAuthenticationResult,
@@ -43,16 +44,7 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
         mLoginViewPresenter.onCreate();
     }
 
-    //#member methods
-    private void deactivateLoginButton() {
-        this.mBtnLogin.setEnabled(false);
-    }
-
-    private void activateLoginButton() {
-        this.mBtnLogin.setEnabled(true);
-    }
-
-                                                            //#Implementation of Interfaces
+    //#Implementation of Interfaces
 
     //#implementation of LoginViewPresenter.IObjectsInitializer
     public ConstraintLayout onInitializingMainContainer() {
@@ -143,19 +135,16 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
     @Override
     public void onAuthenticationError(String resultMsg) {
         this.mTextViewBackendResult.setText(resultMsg);
-        this.activateLoginButton();
     }
 
     @Override
     public void onAuthenticationSuccessful(String resultMsg) {
         this.mTextViewBackendResult.setText(resultMsg);
-        this.activateLoginButton();
     }
 
     @Override
     public void onAuthenticationFailed(String resultMsg) {
         this.mTextViewBackendResult.setText(resultMsg);
-        this.activateLoginButton();
     }
 
     //#Lifcycle callbacks
@@ -180,7 +169,6 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
         this.mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                deactivateLoginButton();
                 String userName = mETUserName.getText().toString();
                 String userPassword = mETUserPassword.getText().toString();
                 mLoginViewPresenter.validateUserCredentials(userName, userPassword);
@@ -221,5 +209,15 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
     @Override
     public void onStopBackendAuthenticationService() {
         this.stopService(this.mIntentStartBackendAuthenticationService);
+    }
+
+    @Override
+    public void onLoginButtonEnabled() {
+        this.mBtnLogin.setEnabled(true);
+    }
+
+    @Override
+    public void onLoginButtonDisabled() {
+        this.mBtnLogin.setEnabled(false);
     }
 }
