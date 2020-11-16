@@ -1,0 +1,704 @@
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(date 1604000258000)
++++ app/src/main/AndroidManifest.xml	(date 1604236356874)
+@@ -20,7 +20,7 @@
+             </intent-filter>
+         </activity>
+ 
+-        <service android:name="services.BackendService"
++        <service android:name="services.BackendAuthenticationService"
+             android:exported="false"
+             />
+     </application>
+Index: app/src/main/java/services/BackendService.java
+===================================================================
+--- app/src/main/java/services/BackendService.java	(date 1604000258000)
++++ app/src/main/java/services/BackendAuthenticationService.java	(date 1604236459305)
+@@ -12,6 +12,7 @@
+ import android.util.Log;
+ 
+ import com.example.mvp_v3.LoginViewPresenter;
++import com.example.mvp_v3.MainActivity;
+ 
+ import java.lang.ref.WeakReference;
+ import java.util.Random;
+@@ -20,10 +21,10 @@
+ import androidx.annotation.NonNull;
+ import enums.AuthenticationResult;
+ 
+-public class BackendService extends IntentService {
++public class BackendAuthenticationService extends IntentService {
+ 
+     //#static final variable
+-    private final static String TAG = BackendService.class.getSimpleName();
++    private final static String TAG = BackendAuthenticationService.class.getSimpleName();
+     public static final String INTENT_KEY_FOR_RESULT_RECEIVER = "result receiver listener";
+     private static final String BUNDLE_KEY_BACKEND_DECLARES_AUTHENTICATION_RESULT = "on authentication result issued";
+     private static final String BUNDLE_VALUE_BACKEND_DECLARES_AUTHENTICATION_RESULT_IS_SUCCESSFUL = "AUTHENTICATION_SUCCESSFUL";
+@@ -60,11 +61,11 @@
+ 
+     //#constructors
+     //default constructor
+-    public BackendService() {
++    public BackendAuthenticationService() {
+         super("");
+     }
+ 
+-    public BackendService(String name) {
++    public BackendAuthenticationService(String name) {
+         super(name);
+     }
+ 
+@@ -83,8 +84,8 @@
+         this.mConsumerHandlerThread.start();
+         this.mConsumerHandlerThread.initializeHandler();
+         Bundle extras = intent.getExtras();
+-        String token = extras.getString(LoginViewPresenter.INTENT_KEY_AUTHENTICATION_PROCESS_STATE);
+-        mResultReceiverListener = intent.getParcelableExtra(BackendService.INTENT_KEY_FOR_RESULT_RECEIVER);
++        String token = extras.getString(MainActivity.INTENT_KEY_START_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS_RESULT);
++        mResultReceiverListener = intent.getParcelableExtra(BackendAuthenticationService.INTENT_KEY_FOR_RESULT_RECEIVER);
+         this.mConsumerHandlerThread.enqueueMessage(token);
+     }
+ 
+@@ -129,19 +130,19 @@
+ 
+         @Override
+         public void run() {
+-            Log.i(BackendService.TAG + "." + TAG, "run");
++            Log.i(BackendAuthenticationService.TAG + "." + TAG, "run");
+             super.run();
+         }
+ 
+         @Override
+         public boolean quit() {
+-            Log.i(BackendService.TAG + "." + TAG, "quit");
++            Log.i(BackendAuthenticationService.TAG + "." + TAG, "quit");
+             return super.quit();
+         }
+ 
+         @Override
+         public boolean quitSafely() {
+-            Log.i(BackendService.TAG + "." + TAG, "quitSafely");
++            Log.i(BackendAuthenticationService.TAG + "." + TAG, "quitSafely");
+             return super.quitSafely();
+         }
+ 
+@@ -165,7 +166,7 @@
+                 Random random = new Random();
+ 
+                 switch (op) {
+-                    case LoginViewPresenter.INTENT_VALUE_REQUEST_START_AUTHENTICATING_USER:
++                    case MainActivity.INTENT_KEY_START_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS_RESULT:
+                         int authenticationElapsedTime = random.nextInt(4) + 2;
+                         for (int i = 0; i < authenticationElapsedTime; i++) {
+                             try {
+@@ -173,72 +174,72 @@
+                             } catch (InterruptedException e) {
+                                 e.printStackTrace();
+                             }
+-                            Log.v(BackendService.TAG + "." + this.TAG, "waiting for authenticating user: " + (i + 1) + " seconds");
++                            Log.v(BackendAuthenticationService.TAG + "." + this.TAG, "waiting for authenticating user: " + (i + 1) + " seconds");
+                         }
+-                        //Log.d(BackendService.TAG + "." + this.TAG, "authentication process took: " + authenticationElapsedTime + " seconds");
++                        //Log.d(BackendAuthenticationService.TAG + "." + this.TAG, "authentication process took: " + authenticationElapsedTime + " seconds");
+ 
+                         authenticationResult = random.nextInt(3);
+                         switch (authenticationResult) {
+                             case 0:
+-                                Log.i(BackendService.TAG + "." + this.TAG, "authentication process result: " + AuthenticationResult.ERROR.bytName());
+-                                bundle.putInt(BackendService.BUNDLE_KEY_BACKEND_DECLARES_AUTHENTICATION_RESULT, AuthenticationResult.ERROR.byNum());
++                                Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "authentication process result: " + AuthenticationResult.ERROR.bytName());
++                                bundle.putInt(BackendAuthenticationService.BUNDLE_KEY_BACKEND_DECLARES_AUTHENTICATION_RESULT, AuthenticationResult.ERROR.byNum());
+                                 break;
+                             case 1:
+-                                Log.i(BackendService.TAG + "." + this.TAG, "authentication process result: " + AuthenticationResult.SUCCESSFUL.bytName());
+-                                bundle.putInt(BackendService.BUNDLE_KEY_BACKEND_DECLARES_AUTHENTICATION_RESULT, AuthenticationResult.SUCCESSFUL.byNum());
++                                Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "authentication process result: " + AuthenticationResult.SUCCESSFUL.bytName());
++                                bundle.putInt(BackendAuthenticationService.BUNDLE_KEY_BACKEND_DECLARES_AUTHENTICATION_RESULT, AuthenticationResult.SUCCESSFUL.byNum());
+                                 break;
+                             case 2:
+-                                Log.i(BackendService.TAG + "." + this.TAG, "authentication process result: " + AuthenticationResult.FAILED.bytName());
+-                                bundle.putInt(BackendService.BUNDLE_KEY_BACKEND_DECLARES_AUTHENTICATION_RESULT, AuthenticationResult.FAILED.byNum());
++                                Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "authentication process result: " + AuthenticationResult.FAILED.bytName());
++                                bundle.putInt(BackendAuthenticationService.BUNDLE_KEY_BACKEND_DECLARES_AUTHENTICATION_RESULT, AuthenticationResult.FAILED.byNum());
+                                 break;
+                             /*case 3:
+-                                Log.i(BackendService.TAG + "." + this.TAG, "authentication process result: " + AuthenticationResult.UNKNOWN.bytName());
+-                                bundle.putInt(BackendService.BUNDLE_KEY_BACKEND_DECLARES_AUTHENTICATION_RESULT, AuthenticationResult.UNKNOWN.byNum());
++                                Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "authentication process result: " + AuthenticationResult.UNKNOWN.bytName());
++                                bundle.putInt(BackendAuthenticationService.BUNDLE_KEY_BACKEND_DECLARES_AUTHENTICATION_RESULT, AuthenticationResult.UNKNOWN.byNum());
+                                 break;*/
+                             default:
+-                                Log.w(BackendService.TAG + "." + this.TAG, "UNHANDLED_CASE");
++                                Log.w(BackendAuthenticationService.TAG + "." + this.TAG, "UNHANDLED_CASE");
+                                 break;
+                         }
+                         msg.setData(bundle);
+                         msg.sendToTarget();
+                         break;
+ 
+-                    case BackendService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_ERROR:
+-                        Log.i(BackendService.TAG + "." + this.TAG, "call" + " " + BackendService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_ERROR);
+-                        bundle.putString(BackendService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT,
+-                                BackendService.BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_ERROR);
++                    case BackendAuthenticationService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_ERROR:
++                        Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "call" + " " + BackendAuthenticationService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_ERROR);
++                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT,
++                                BackendAuthenticationService.BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_ERROR);
+                         msg.setData(bundle);
+                         msg.sendToTarget();
+                         break;
+ 
+-                    case BackendService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_SUCCESSFUL:
+-                        Log.i(BackendService.TAG + "." + this.TAG, "call" + " " + BackendService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_SUCCESSFUL);
+-                        bundle.putString(BackendService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT,
+-                                BackendService.BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_SUCCESSFUL);
++                    case BackendAuthenticationService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_SUCCESSFUL:
++                        Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "call" + " " + BackendAuthenticationService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_SUCCESSFUL);
++                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT,
++                                BackendAuthenticationService.BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_SUCCESSFUL);
+                         msg.setData(bundle);
+                         msg.sendToTarget();
+                         break;
+ 
+-                    case BackendService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_FAILED:
+-                        Log.i(BackendService.TAG + "." + this.TAG, "call" + " " + BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_FAILED);
+-                        bundle.putString(BackendService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT,
+-                                BackendService.BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_FAILED);
++                    case BackendAuthenticationService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_FAILED:
++                        Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "call" + " " + BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_FAILED);
++                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT,
++                                BackendAuthenticationService.BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_FAILED);
+                         msg.setData(bundle);
+                         msg.sendToTarget();
+                         break;
+-                    /*case BackendService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_UNKNOWN:
+-                        Log.i(BackendService.TAG + "." + this.TAG, "call" + " " + BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_UNKNOWN);
+-                        bundle.putString(BackendService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT,
+-                                BackendService.BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_UNKNOWN);
++                    /*case BackendAuthenticationService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_UNKNOWN:
++                        Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "call" + " " + BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_UNKNOWN);
++                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT,
++                                BackendAuthenticationService.BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_UNKNOWN);
+                         msg.setData(bundle);
+                         msg.sendToTarget();
+                         break;*/
+ 
+-                    case BackendService.QUIT:
++                    case BackendAuthenticationService.QUIT:
+                         quit();
+                         break;
+ 
+-                    case BackendService.QUIT_SAFELY:
++                    case BackendAuthenticationService.QUIT_SAFELY:
+                         quitSafely();
+                         break;
+                 }
+@@ -247,14 +248,14 @@
+ 
+             @Override
+             public void dispatchMessage(@NonNull Message msg) {
+-                Log.v(BackendService.TAG + "." + this.TAG, "dispatchMessage: ");
++                Log.v(BackendAuthenticationService.TAG + "." + this.TAG, "dispatchMessage: ");
+                 super.dispatchMessage(msg);
+             }
+ 
+             @NonNull
+             @Override
+             public String getMessageName(@NonNull Message message) {
+-                Log.v(BackendService.TAG + "." + this.TAG, "super.getMessageName(message): " + super.getMessageName(message));
++                Log.v(BackendAuthenticationService.TAG + "." + this.TAG, "super.getMessageName(message): " + super.getMessageName(message));
+                 return super.getMessageName(message);
+             }
+         }
+@@ -265,98 +266,98 @@
+         //#private final static variables
+         private final String TAG = MyProducerHandlerCallback.class.getSimpleName();
+ 
+-        private WeakReference<BackendService> mBackendServiceWeakReference = null;
++        private WeakReference<BackendAuthenticationService> mBackendServiceWeakReference = null;
+ 
+-        MyProducerHandlerCallback(BackendService backendServiceContext) {
++        MyProducerHandlerCallback(BackendAuthenticationService backendServiceContext) {
+             this.mBackendServiceWeakReference = new WeakReference<>(backendServiceContext);
+         }
+ 
+         @Override
+         public boolean handleMessage(@NonNull Message message) {
+             Bundle data = message.getData();
+-            boolean op1 = data.containsKey(BackendService.BUNDLE_KEY_BACKEND_DECLARES_AUTHENTICATION_RESULT);
+-            boolean op2 = data.containsKey(BackendService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT);
++            boolean op1 = data.containsKey(BackendAuthenticationService.BUNDLE_KEY_BACKEND_DECLARES_AUTHENTICATION_RESULT);
++            boolean op2 = data.containsKey(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT);
+             Message msg = new Message();
+             msg.setTarget(mConsumerHandlerThread.getInstanceOfConsumerHandler());
+             Bundle bundle = new Bundle();
+ 
+             if (op1) {
+-                int backendAuthenticationResult = data.getInt(BackendService.BUNDLE_KEY_BACKEND_DECLARES_AUTHENTICATION_RESULT);
++                int backendAuthenticationResult = data.getInt(BackendAuthenticationService.BUNDLE_KEY_BACKEND_DECLARES_AUTHENTICATION_RESULT);
+                 switch (backendAuthenticationResult) {
+                     case 0:
+-                        Log.i(BackendService.TAG + "." + this.TAG, "AUTHENTICATION ERROR");
+-                        msg.obj = BackendService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_ERROR;
+-                        bundle.putString(BackendService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT,
+-                                BackendService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_ERROR);
++                        Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "AUTHENTICATION ERROR");
++                        msg.obj = BackendAuthenticationService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_ERROR;
++                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT,
++                                BackendAuthenticationService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_ERROR);
+                         break;
+ 
+                     case 1:
+-                        Log.i(BackendService.TAG + "." + this.TAG, "AUTHENTICATION SUCCESSFUL");
+-                        msg.obj = BackendService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_SUCCESSFUL;
+-                        bundle.putString(BackendService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT,
+-                                BackendService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_SUCCESSFUL);
++                        Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "AUTHENTICATION SUCCESSFUL");
++                        msg.obj = BackendAuthenticationService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_SUCCESSFUL;
++                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT,
++                                BackendAuthenticationService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_SUCCESSFUL);
+                         break;
+ 
+                     case 2:
+-                        Log.i(BackendService.TAG + "." + this.TAG, "AUTHENTICATION FAILED");
+-                        msg.obj = BackendService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_FAILED;
+-                        bundle.putString(BackendService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT,
+-                                BackendService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_FAILED);
++                        Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "AUTHENTICATION FAILED");
++                        msg.obj = BackendAuthenticationService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_FAILED;
++                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT,
++                                BackendAuthenticationService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_FAILED);
+                         break;
+ 
+                     /*case 3:
+-                        Log.i(BackendService.TAG + "." + this.TAG, "AUTHENTICATION STATE IS UNKNOWN");
+-                        msg.obj = BackendService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_UNKNOWN;
+-                        bundle.putString(BackendService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT,
+-                                BackendService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_UNKNOWN);
++                        Log.i(BackendAuthenticationService.TAG + "." + this.TAG, "AUTHENTICATION STATE IS UNKNOWN");
++                        msg.obj = BackendAuthenticationService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_UNKNOWN;
++                        bundle.putString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT,
++                                BackendAuthenticationService.BUNDLE_VALUE_FRONTEND_REPLY_RE_AUTHENTICATION_RESULT_IS_UNKNOWN);
+                         break;*/
+ 
+                     default:
+                 }
+             } else if (op2) {
+-                String res = data.getString(BackendService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT);
++                String res = data.getString(BackendAuthenticationService.BUNDLE_KEY_BACKEND_TO_FRONTEND_REPLY_PER_AUTHENTICATION_RESULT);
+                 Bundle bundleResRec = null;
+                 switch (res) {
+-                    case BackendService.BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_ERROR:
+-                        Log.i(BackendService.TAG + "." + this.TAG, BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_ERROR);
++                    case BackendAuthenticationService.BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_ERROR:
++                        Log.i(BackendAuthenticationService.TAG + "." + this.TAG, BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_ERROR);
+                         bundleResRec = new Bundle();
+-                        bundleResRec.putString(BackendService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND,
+-                                BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_ERROR);
++                        bundleResRec.putString(BackendAuthenticationService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND,
++                                BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_ERROR);
+                         mResultReceiverListener.send(Activity.RESULT_OK, bundleResRec);
+                         break;
+ 
+-                    case BackendService.BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_SUCCESSFUL:
+-                        Log.i(BackendService.TAG + "." + this.TAG, BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_SUCCESSFUL);
++                    case BackendAuthenticationService.BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_SUCCESSFUL:
++                        Log.i(BackendAuthenticationService.TAG + "." + this.TAG, BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_SUCCESSFUL);
+                         bundleResRec = new Bundle();
+-                        bundleResRec.putString(BackendService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND,
+-                                BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_SUCCESSFUL);
++                        bundleResRec.putString(BackendAuthenticationService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND,
++                                BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_SUCCESSFUL);
+                         mResultReceiverListener.send(Activity.RESULT_OK, bundleResRec);
+                         break;
+ 
+-                    case BackendService.BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_FAILED:
+-                        Log.i(BackendService.TAG + "." + this.TAG, BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_FAILED);
++                    case BackendAuthenticationService.BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_FAILED:
++                        Log.i(BackendAuthenticationService.TAG + "." + this.TAG, BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_FAILED);
+                         bundleResRec = new Bundle();
+-                        bundleResRec.putString(BackendService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND,
+-                                BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_FAILED);
++                        bundleResRec.putString(BackendAuthenticationService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND,
++                                BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_FAILED);
+                         mResultReceiverListener.send(Activity.RESULT_OK, bundleResRec);
+                         break;
+ 
+-                    /*case BackendService.BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_UNKNOWN:
+-                        Log.i(BackendService.TAG + "." + this.TAG, BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_UNKNOWN);
++                    /*case BackendAuthenticationService.BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_UNKNOWN:
++                        Log.i(BackendAuthenticationService.TAG + "." + this.TAG, BUNDLE_VALUE_BACKEND_TO_FRONTEND_CALL_ON_AUTHENTICATION_UNKNOWN);
+                         bundleResRec = new Bundle();
+-                        bundleResRec.putString(BackendService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND,
+-                                BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_UNKNOWN);
++                        bundleResRec.putString(BackendAuthenticationService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND,
++                                BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_UNKNOWN);
+                         mResultReceiverListener.send(Activity.RESULT_OK, bundleResRec);
+                         break;*/
+ 
+                     default:
+                         bundleResRec = new Bundle();
+-                        bundleResRec.putString(BackendService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND,
+-                                BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_RESULT_CANCELED);
++                        bundleResRec.putString(BackendAuthenticationService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND,
++                                BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_RESULT_CANCELED);
+                         mResultReceiverListener.send(Activity.RESULT_CANCELED, bundleResRec);
+ 
+                 }
+-                msg.obj = BackendService.QUIT;
++                msg.obj = BackendAuthenticationService.QUIT;
+             }
+             msg.setData(bundle);
+             msg.sendToTarget();
+Index: app/src/main/java/com/example/mvp_v3/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/mvp_v3/MainActivity.java	(date 1604000258000)
++++ app/src/main/java/com/example/mvp_v3/MainActivity.java	(date 1604236356854)
+@@ -1,27 +1,38 @@
+ package com.example.mvp_v3;
+ 
++import android.content.Intent;
+ import android.os.Bundle;
++import android.os.ResultReceiver;
+ import android.view.View;
+ import android.widget.Button;
+ import android.widget.EditText;
+ import android.widget.ProgressBar;
++import android.widget.TextView;
+ import android.widget.Toast;
++
+ import androidx.appcompat.app.AppCompatActivity;
+ import androidx.constraintlayout.widget.ConstraintLayout;
++import services.BackendAuthenticationService;
+ 
+ 
+ public class MainActivity extends AppCompatActivity implements LoginViewPresenter.IObjectsInitializer,
+-                                                               LoginViewPresenter.IProgressBarVisibilitySwitch,
+-                                                               LoginViewPresenter.IUserCredentialsValidationService,
+-                                                               LoginViewPresenter.IAuthenticationResult
+-{
++        LoginViewPresenter.IProgressBarVisibilitySwitch,
++        LoginViewPresenter.IUserCredentialsValidationService,
++        LoginViewPresenter.IAuthenticationResult,
++        LoginViewPresenter.IConfigureAndStatesOfBackendAuthenticationService {
++
++    public final static String INTENT_KEY_START_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS_RESULT = "START_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS_RESULT";
++    public final static String INTENT_VALUE_START_BACKEND_SERVICE_FOR_AUTHENTICATING_PROCESS_START = "START_BACKEND_SERVICE_FOR_AUTHENTICATING_PROCESS_START";
++
+     //member variables
+     protected LoginViewPresenter mLoginViewPresenter = null;
+     protected EditText mETUserName = null;
+     protected EditText mETUserPassword = null;
+     protected Button mBtnLogin = null;
++    protected TextView mTextViewBackendResult = null;
+     protected ProgressBar mProgressBarLoginInProgress = null;
+     protected ConstraintLayout mMainContainer = null;
++    protected Intent mIntentStartBackendAuthenticationService;
+ 
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+@@ -35,11 +46,12 @@
+     private void deactivateLoginButton() {
+         this.mBtnLogin.setEnabled(false);
+     }
++
+     private void activateLoginButton() {
+         this.mBtnLogin.setEnabled(true);
+     }
+ 
+-    //#Implementation of Interfaces
++                                                            //#Implementation of Interfaces
+ 
+     //#implementation of LoginViewPresenter.IObjectsInitializer
+     public ConstraintLayout onInitializingMainContainer() {
+@@ -51,18 +63,27 @@
+     }
+ 
+     public EditText onInitializingETUserPassword() {
+-         return this.mETUserPassword = findViewById(R.id.etUserPassword);
++        return this.mETUserPassword = findViewById(R.id.etUserPassword);
+     }
+ 
+     public Button onInitializingButtonLogin() {
+-         return this.mBtnLogin = findViewById(R.id.btnLogin);
++        return this.mBtnLogin = findViewById(R.id.btnLogin);
+     }
+ 
++    public TextView onInitializingTextViewBackendResult() {
++        return this.mTextViewBackendResult = findViewById(R.id.tvBackendResult);
++    }
++
+     public ProgressBar onInitializingProgressBar() {
+-         return this.mProgressBarLoginInProgress = findViewById(R.id.progressBarLoginInProgress);
++        return this.mProgressBarLoginInProgress = findViewById(R.id.progressBarLoginInProgress);
+     }
++
++    @Override
++    public Intent onInitializingIntentBackendService() {
++        return this.mIntentStartBackendAuthenticationService = new Intent(this, BackendAuthenticationService.class);
++    }
++
+     //#implementation of LoginViewPresenter.IProgressBarVisibilitySwitch
+-
+     @Override
+     public void onProgressBarVisibilitySetToVisible() {
+         this.mProgressBarLoginInProgress.setVisibility(View.VISIBLE);
+@@ -72,8 +93,8 @@
+     public void onProgressBarVisibilitySetToGone() {
+         this.mProgressBarLoginInProgress.setVisibility(View.GONE);
+     }
++
+     //#implementation of LoginViewPresenter.IUserCredentialsValidationService
+-
+     public void onUserCredentialsAreValid() {
+         Toast.makeText(this, "User credentials entered are valid and matching the template.", Toast.LENGTH_SHORT).show();
+     }
+@@ -81,7 +102,7 @@
+     @Override
+     public void onUserNameIsInvalid() {
+         Toast.makeText(this, "User name entered is not valid", Toast.LENGTH_SHORT).show();
+-        if (!this.mBtnLogin.isEnabled()){
++        if (!this.mBtnLogin.isEnabled()) {
+             this.mBtnLogin.setEnabled(true);
+         }
+     }
+@@ -89,7 +110,7 @@
+     @Override
+     public void onUserPasswordIsInvalid() {
+         Toast.makeText(this, "User password entered is not valid", Toast.LENGTH_SHORT).show();
+-        if (!this.mBtnLogin.isEnabled()){
++        if (!this.mBtnLogin.isEnabled()) {
+             this.mBtnLogin.setEnabled(true);
+         }
+     }
+@@ -97,7 +118,7 @@
+     @Override
+     public void onUserNameIsNull() {
+         Toast.makeText(this, "User name member variable is null", Toast.LENGTH_SHORT).show();
+-        if (!this.mBtnLogin.isEnabled()){
++        if (!this.mBtnLogin.isEnabled()) {
+             this.mBtnLogin.setEnabled(true);
+         }
+     }
+@@ -105,7 +126,7 @@
+     @Override
+     public void onUserPasswordIsNull() {
+         Toast.makeText(this, "User password member variable is null", Toast.LENGTH_SHORT).show();
+-        if (!this.mBtnLogin.isEnabled()){
++        if (!this.mBtnLogin.isEnabled()) {
+             this.mBtnLogin.setEnabled(true);
+         }
+     }
+@@ -113,34 +134,21 @@
+ 
+     //#implementation of LoginViewPresenter.IAuthenticationResult
+     @Override
+-    public void onAuthenticationError() {
+-        if(!mBtnLogin.isEnabled()) {
+-            activateLoginButton();
+-        }
++    public void onAuthenticationError(String resultMsg) {
++        this.mTextViewBackendResult.setText(resultMsg);
+     }
+ 
+     @Override
+-    public void onAuthenticationSuccessful() {
+-        if(!mBtnLogin.isEnabled()) {
+-            activateLoginButton();
+-        }
++    public void onAuthenticationSuccessful(String resultMsg) {
++        this.mTextViewBackendResult.setText(resultMsg);
+     }
+ 
+     @Override
+-    public void onAuthenticationFailed() {
+-        if(!mBtnLogin.isEnabled()) {
+-            activateLoginButton();
+-        }
++    public void onAuthenticationFailed(String resultMsg) {
++        this.mTextViewBackendResult.setText(resultMsg);
+     }
+ 
+-    @Override
+-    public void onAuthenticationUnknown() {
+-        if(!mBtnLogin.isEnabled()) {
+-            activateLoginButton();
+-        }
+-    }
+     //#Lifcycle callbacks
+-
+     @Override
+     protected void onStart() {
+         super.onStart();
+@@ -187,4 +195,21 @@
+         super.onDestroy();
+         mLoginViewPresenter.onDestroy();
+     }
++
++    @Override
++    public void onConfigureIntentForStartingBackendAuthenticationServiceWith(ResultReceiver resultReceiver) {
++        mIntentStartBackendAuthenticationService = new Intent(this, BackendAuthenticationService.class);
++        mIntentStartBackendAuthenticationService.putExtra(INTENT_KEY_START_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS_RESULT, INTENT_VALUE_START_BACKEND_SERVICE_FOR_AUTHENTICATING_PROCESS_START);
++        mIntentStartBackendAuthenticationService.putExtra(BackendAuthenticationService.INTENT_KEY_FOR_RESULT_RECEIVER, resultReceiver);
++    }
++
++    @Override
++    public void onStartBackendAuthenticationService() {
++        this.startService(this.mIntentStartBackendAuthenticationService);
++    }
++
++    @Override
++    public void onStopBackendAuthenticationService() {
++        this.stopService(this.mIntentStartBackendAuthenticationService);
++    }
+ }
+Index: app/src/main/java/com/example/mvp_v3/LoginViewPresenter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/mvp_v3/LoginViewPresenter.java	(date 1604000258000)
++++ app/src/main/java/com/example/mvp_v3/LoginViewPresenter.java	(date 1604236356862)
+@@ -15,15 +15,12 @@
+ import java.lang.ref.WeakReference;
+ 
+ import androidx.constraintlayout.widget.ConstraintLayout;
+-import services.BackendService;
++import services.BackendAuthenticationService;
+ 
+ public class LoginViewPresenter implements UserCredentialsValidationService.IBackendResponseUseronCredentialValidation {
+ 
+     //#public final static variables
+     private final static String TAG = LoginViewPresenter.class.getSimpleName();
+-    public final static String INTENT_KEY_AUTHENTICATION_PROCESS_STATE = "authentication process state";
+-    public final static String INTENT_VALUE_REQUEST_START_AUTHENTICATING_USER = "start authentication process in the backend";
+-
+     //#member variables
+     protected EditText mETUserName = null;
+     protected EditText mETUserPassword = null;
+@@ -41,8 +38,9 @@
+         EditText onInitializingETUserName();
+         EditText onInitializingETUserPassword();
+         Button onInitializingButtonLogin();
+-        TextView onInitializingTextView();
++        TextView onInitializingTextViewBackendResult();
+         ProgressBar onInitializingProgressBar();
++        Intent onInitializingIntentBackendService();
+     }
+ 
+     interface IProgressBarVisibilitySwitch {
+@@ -62,7 +60,11 @@
+         void onAuthenticationError(String resultMsg);
+         void onAuthenticationSuccessful(String resultMsg);
+         void onAuthenticationFailed(String resultMsg);
+-        //void onAuthenticationUnknown();
++    }
++    interface IConfigureAndStatesOfBackendAuthenticationService {
++        void onConfigureIntentForStartingBackendAuthenticationServiceWith(ResultReceiver resultReceiver);
++        void onStartBackendAuthenticationService();
++        void onStopBackendAuthenticationService();
+     }
+ 
+     //#Constructor
+@@ -102,50 +104,37 @@
+         UserCredentialsValidationService userCredentialsValidationService = new UserCredentialsValidationService(this, userName, userPassword);
+         if (userCredentialsValidationService.getCredentialsValidityStateTo() == true) {
+             //do connect to backend for authenticating users' credentials
+-            this.startBackendAuthenticationService();
+-            this.setProgressBarVisibilityToVisible();
+-        }
+-    }
+-
+-    private void setProgressBarVisibilityToVisible() {
+-        mMainActivityWeakReference.get().onProgressBarVisibilitySetToVisible();
+-    }
+-
+-    private void startBackendAuthenticationService() {
+-        mIntentStartBackendAuthenticationService = new Intent(this.mMainActivityWeakReference.get(), BackendService.class);
+-        mIntentStartBackendAuthenticationService.putExtra(INTENT_KEY_AUTHENTICATION_PROCESS_STATE, INTENT_VALUE_REQUEST_START_AUTHENTICATING_USER);
+-        mIntentStartBackendAuthenticationService.putExtra(BackendService.INTENT_KEY_FOR_RESULT_RECEIVER, new MyResultReceiver(new Handler()));
+-        this.mMainActivityWeakReference.get().connectToBackendService(this.getBackendIntent());
++            this.mMainActivityWeakReference.get().onConfigureIntentForStartingBackendAuthenticationServiceWith(new LoginViewPresenter.MyResultReceiver(new Handler()));
++            this.mMainActivityWeakReference.get().onStartBackendAuthenticationService();
++            mMainActivityWeakReference.get().onProgressBarVisibilitySetToVisible();
++        }
+     }
+-
+-    public Intent getBackendIntent() {
+-        return this.mIntentStartBackendAuthenticationService;
+-    }
+ 
+     public void initializeObjects() {
+         this.mMainContainer = this.mMainActivityWeakReference.get().onInitializingMainContainer();
+         this.mETUserName = this.mMainActivityWeakReference.get().onInitializingETUserName();
+         this.mETUserPassword = this.mMainActivityWeakReference.get().onInitializingETUserPassword();
+         this.mBtnLogin = this.mMainActivityWeakReference.get().onInitializingButtonLogin();
+-        this.mTextViewBackendResult = this.mMainActivityWeakReference.get().onInitializingTextView();
++        this.mTextViewBackendResult = this.mMainActivityWeakReference.get().onInitializingTextViewBackendResult();
+         this.mProgressBarForLoginInProgress = this.mMainActivityWeakReference.get().onInitializingProgressBar();
+     }
+ 
+     private void onAuthenticationError(String errorMsg) {
+         mMainActivityWeakReference.get().onProgressBarVisibilitySetToGone();
+         mMainActivityWeakReference.get().onAuthenticationError(errorMsg);
+-        mMainActivityWeakReference.get().disconnectFromBackend(this.getBackendIntent());
+-        
++        mMainActivityWeakReference.get().onStopBackendAuthenticationService();
+     }
+ 
+     private void onAuthenticationSuccessful(String resultMsg) {
+         mMainActivityWeakReference.get().onProgressBarVisibilitySetToGone();
+         mMainActivityWeakReference.get().onAuthenticationSuccessful(resultMsg);
++        mMainActivityWeakReference.get().onStopBackendAuthenticationService();
+     }
+ 
+     private void onAuthenticationFailed(String failureMsg) {
+         mMainActivityWeakReference.get().onProgressBarVisibilitySetToGone();
+         mMainActivityWeakReference.get().onAuthenticationFailed(failureMsg);
++        mMainActivityWeakReference.get().onStopBackendAuthenticationService();
+     }
+ 
+     //#Lifecycle callbacks
+@@ -195,27 +184,23 @@
+         protected void onReceiveResult(int resultCode, Bundle resultData) {
+             super.onReceiveResult(resultCode, resultData);
+             Log.d(LoginViewPresenter.TAG + "." + TAG, "onReceiveResult");
+-            String backendToPresenterSentResult = resultData.getString(BackendService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND);
++            String backendToPresenterSentResult = resultData.getString(BackendAuthenticationService.BUNDLE_KEY_ON_RESULT_RECEIVER_SEND);
+ 
+             switch (resultCode) {
+                 case Activity.RESULT_OK:
+                     switch (backendToPresenterSentResult) {
+-                        case BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_ERROR:
+-                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_ERROR);
++                        case BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_ERROR:
++                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_ERROR);
+                             onAuthenticationError("Connection terminated unexpectedly. Try again.");
+                             break;
+-                        case BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_SUCCESSFUL:
+-                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_SUCCESSFUL);
++                        case BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_SUCCESSFUL:
++                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_SUCCESSFUL);
+                             onAuthenticationSuccessful("Authentication_Successful.");
+                             break;
+-                        case BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_FAILED:
+-                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_FAILED);
++                        case BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_FAILED:
++                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_FAILED);
+                             onAuthenticationFailed("User can not be authenticated. Invalid user credentials provided.");
+                             break;
+-                        /*case BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_UNKNOWN:
+-                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_AUTHENTICATION_UNKNOWN);
+-                            onAuthenticationUnknown();
+-                            break;*/
+                     }
+                     break;
+ 
