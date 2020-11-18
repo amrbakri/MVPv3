@@ -18,6 +18,7 @@ import services.BackendAuthenticationService;
 public class MainActivity extends AppCompatActivity implements LoginViewPresenter.IObjectsInitializer,
         LoginViewPresenter.IProgressBarVisibilitySwitch,
         LoginViewPresenter.ILoginButtonEnableState,
+        LoginViewPresenter.ILoginButtonClicked,
         LoginViewPresenter.ITextViewVisibilitySwitch,
         LoginViewPresenter.IUserCredentialsValidationService,
         LoginViewPresenter.IAuthenticationResult,
@@ -91,6 +92,28 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
     @Override
     public void onTextViewVisibilitySetToGone() {
         this.mTextViewBackendResult.setVisibility(View.GONE);
+    }
+
+    //#implementation of LoginViewPresenter.ILoginButtonEnableState
+    @Override
+    public void onLoginButtonEnabled() {
+        this.mBtnLogin.setEnabled(true);
+    }
+
+    @Override
+    public void onLoginButtonDisabled() {
+        this.mBtnLogin.setEnabled(false);
+    }
+
+    //#implementation of LoginViewPresenter.ILoginButtonClicked
+    @Override
+    public void clearEditTextInputForUserName() {
+        this.mETUserName.setText("");
+    }
+
+    @Override
+    public void clearEditTextInputForPassword() {
+        this.mETUserPassword.setText("");
     }
 
     //#implementation of LoginViewPresenter.IUserCredentialsValidationService
@@ -209,15 +232,5 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
     @Override
     public void onStopBackendAuthenticationService() {
         this.stopService(this.mIntentStartBackendAuthenticationService);
-    }
-
-    @Override
-    public void onLoginButtonEnabled() {
-        this.mBtnLogin.setEnabled(true);
-    }
-
-    @Override
-    public void onLoginButtonDisabled() {
-        this.mBtnLogin.setEnabled(false);
     }
 }

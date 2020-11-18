@@ -52,6 +52,11 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
         void onLoginButtonDisabled();
     }
 
+    interface ILoginButtonClicked {
+        void clearEditTextInputForUserName();
+        void clearEditTextInputForPassword();
+    }
+
     interface ITextViewVisibilitySwitch {
         void onTextViewVisibilitySetToVisible();
         void onTextViewVisibilitySetToGone();
@@ -114,6 +119,8 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
         if (userCredentialsValidationService.getCredentialsValidityStateTo() == true) {
             //do connect to backend for authenticating users' credentials
             this.mMainActivityWeakReference.get().onLoginButtonDisabled();
+            this.mMainActivityWeakReference.get().clearEditTextInputForUserName();
+            this.mMainActivityWeakReference.get().clearEditTextInputForPassword();
             this.mMainActivityWeakReference.get().onConfigureIntentForStartingBackendAuthenticationServiceWith(new LoginViewPresenter.MyResultReceiver(new Handler()));
             this.mMainActivityWeakReference.get().onStartBackendAuthenticationService();
             mMainActivityWeakReference.get().onProgressBarVisibilitySetToVisible();
