@@ -31,15 +31,18 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
     protected Intent mIntentStartBackendAuthenticationService = null;
     private WeakReference<MainActivity> mMainActivityWeakReference = null;
     private TextView mTextViewBackendResult = null;
+    private Button mBtnNavigateToMVVM = null;
 
     //#Interfaces
     interface IObjectsInitializer {
-        ConstraintLayout onInitializingMainContainer();
-        EditText onInitializingETUserName();
-        EditText onInitializingETUserPassword();
-        Button onInitializingButtonLogin();
-        TextView onInitializingTextViewForBackendResult();
-        ProgressBar onInitializingProgressBar();
+        ConstraintLayout onInitializingMainContainerConstraintLayout();
+        EditText onInitializingUserNameEditText();
+        EditText onInitializingUserPasswordEditText();
+        Button onInitializingLoginButton();
+        TextView onInitializingForBackendResultTextView();
+        ProgressBar onInitializingWaitingForBackendToAuthenticateProgressBar();
+        Button onInitializingNavigateToMVVMDataBindingButton();
+
     }
 
     interface IProgressBarVisibilitySwitch {
@@ -55,11 +58,18 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
     interface ILoginButtonClicked {
         void clearEditTextInputForUserName();
         void clearEditTextInputForPassword();
+        void clearBackendAuthenticationFeedbackTextView();
     }
 
     interface ITextViewVisibilitySwitch {
         void onTextViewVisibilitySetToVisible();
         void onTextViewVisibilitySetToGone();
+    }
+
+
+    interface INavigatetoMVVMDatabinindingButtonEnableStateChanged {
+        void enableNavigateToMVVMDataBindingButton();
+        void disableNavigateToMVVMDataBindingButton();
     }
 
     interface IUserCredentialsValidationService {
@@ -121,19 +131,23 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
             this.mMainActivityWeakReference.get().onLoginButtonDisabled();
             this.mMainActivityWeakReference.get().clearEditTextInputForUserName();
             this.mMainActivityWeakReference.get().clearEditTextInputForPassword();
+            this.mMainActivityWeakReference.get().clearBackendAuthenticationFeedbackTextView();
+            this.mMainActivityWeakReference.get().disableNavigateToMVVMDataBindingButton();
             this.mMainActivityWeakReference.get().onConfigureIntentForStartingBackendAuthenticationServiceWith(new LoginViewPresenter.MyResultReceiver(new Handler()));
             this.mMainActivityWeakReference.get().onStartBackendAuthenticationService();
-            mMainActivityWeakReference.get().onProgressBarVisibilitySetToVisible();
+            this.mMainActivityWeakReference.get().onProgressBarVisibilitySetToVisible();
+            this.mMainActivityWeakReference.get().clearBackendAuthenticationFeedbackTextView();
         }
     }
 
     public void initializeObjects() {
-        this.mMainContainer = this.mMainActivityWeakReference.get().onInitializingMainContainer();
-        this.mETUserName = this.mMainActivityWeakReference.get().onInitializingETUserName();
-        this.mETUserPassword = this.mMainActivityWeakReference.get().onInitializingETUserPassword();
-        this.mBtnLogin = this.mMainActivityWeakReference.get().onInitializingButtonLogin();
-        this.mTextViewBackendResult = this.mMainActivityWeakReference.get().onInitializingTextViewForBackendResult();
-        this.mProgressBarForLoginInProgress = this.mMainActivityWeakReference.get().onInitializingProgressBar();
+        this.mMainContainer = this.mMainActivityWeakReference.get().onInitializingMainContainerConstraintLayout();
+        this.mETUserName = this.mMainActivityWeakReference.get().onInitializingUserNameEditText();
+        this.mETUserPassword = this.mMainActivityWeakReference.get().onInitializingUserPasswordEditText();
+        this.mBtnLogin = this.mMainActivityWeakReference.get().onInitializingLoginButton();
+        this.mTextViewBackendResult = this.mMainActivityWeakReference.get().onInitializingForBackendResultTextView();
+        this.mProgressBarForLoginInProgress = this.mMainActivityWeakReference.get().onInitializingWaitingForBackendToAuthenticateProgressBar();
+        this.mBtnNavigateToMVVM = this.mMainActivityWeakReference.get().onInitializingNavigateToMVVMDataBindingButton();
     }
 
     private void onAuthenticationError(String errorMsg) {
@@ -142,6 +156,7 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
         this.mMainActivityWeakReference.get().onLoginButtonEnabled();
         mMainActivityWeakReference.get().onTextViewVisibilitySetToVisible();
         mMainActivityWeakReference.get().onAuthenticationError(errorMsg);
+        mMainActivityWeakReference.get().enableNavigateToMVVMDataBindingButton();
     }
 
     private void onAuthenticationSuccessful(String resultMsg) {
@@ -150,6 +165,7 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
         this.mMainActivityWeakReference.get().onLoginButtonEnabled();
         mMainActivityWeakReference.get().onTextViewVisibilitySetToVisible();
         mMainActivityWeakReference.get().onAuthenticationSuccessful(resultMsg);
+        mMainActivityWeakReference.get().enableNavigateToMVVMDataBindingButton();
     }
 
     private void onAuthenticationFailed(String failureMsg) {
@@ -158,6 +174,7 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
         this.mMainActivityWeakReference.get().onLoginButtonEnabled();
         mMainActivityWeakReference.get().onTextViewVisibilitySetToVisible();
         mMainActivityWeakReference.get().onAuthenticationFailed(failureMsg);
+        mMainActivityWeakReference.get().enableNavigateToMVVMDataBindingButton();
     }
 
     //#Lifecycle callbacks
@@ -214,16 +231,16 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
                 case Activity.RESULT_OK:
                     switch (backendToPresenterSentResult) {
                         case BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_ERROR:
-                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_ERROR);
-                            onAuthenticationError("Connection terminated unexpectedly. Try again.");
+                            Log.d(LoginViewPresenter.TAG + "." + TAG, "AUTHENTICATION_RESULT_IS_ERROR. RESULT_OK " + BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_ERROR);
+                            onAuthenticationError("AUTHENTICATION_RESULT_IS_ERROR. Connection terminated unexpectedly. Try again.");
                             break;
                         case BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_SUCCESSFUL:
-                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_SUCCESSFUL);
-                            onAuthenticationSuccessful("Authentication_Successful.");
+                            Log.d(LoginViewPresenter.TAG + "." + TAG, "AUTHENTICATION_RESULT_IS_SUCCESSFUL. RESULT_OK " + BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_SUCCESSFUL);
+                            onAuthenticationSuccessful("AUTHENTICATION_RESULT_IS_SUCCESSFUL. Authentication_Successful.");
                             break;
                         case BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_FAILED:
-                            Log.d(LoginViewPresenter.TAG + "." + TAG, "RESULT_OK " + BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_FAILED);
-                            onAuthenticationFailed("User can not be authenticated. Invalid user credentials provided.");
+                            Log.d(LoginViewPresenter.TAG + "." + TAG, "AUTHENTICATION_RESULT_IS_FAILED. RESULT_OK " + BackendAuthenticationService.BUNDLE_VALUE_SEND_RESULT_CODE_ON_AUTHENTICATION_RESULT_IS_FAILED);
+                            onAuthenticationFailed("AUTHENTICATION_RESULT_IS_FAILED. User can not be authenticated. Invalid user credentials provided.");
                             break;
                     }
                     break;

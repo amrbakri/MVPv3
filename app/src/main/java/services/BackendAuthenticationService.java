@@ -2,6 +2,7 @@ package services;
 
 import android.app.Activity;
 import android.app.IntentService;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -132,13 +133,13 @@ public class BackendAuthenticationService extends IntentService {
 
         @Override
         public boolean quit() {
-            Log.i(BackendAuthenticationService.TAG + "." + TAG, "quit");
+            Log.i(BackendAuthenticationService.TAG + "." + TAG, "quitted");
             return super.quit();
         }
 
         @Override
         public boolean quitSafely() {
-            Log.i(BackendAuthenticationService.TAG + "." + TAG, "quitSafely");
+            Log.i(BackendAuthenticationService.TAG + "." + TAG, "quitedSafely");
             return super.quitSafely();
         }
 
@@ -328,9 +329,10 @@ public class BackendAuthenticationService extends IntentService {
                         bundleResRec.putString(BackendAuthenticationService.BUNDLE_KEY_RESULT_RECEIVER_TO_SEND_AUTHENTICATION_RESULT_TO_LOGIN_VIEW_PRESENTER,
                                 BackendAuthenticationService.BUNDLE_VALUE_ON_RESULT_RECEIVER_SEND_ON_RESULT_CANCELED);
                         mResultReceiverListener.send(Activity.RESULT_CANCELED, bundleResRec);
-
                 }
                 msg.obj = BackendAuthenticationService.QUIT_SAFELY;
+            } else {
+
             }
             msg.setData(bundle);
             msg.sendToTarget();

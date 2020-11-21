@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
         LoginViewPresenter.ILoginButtonEnableState,
         LoginViewPresenter.ILoginButtonClicked,
         LoginViewPresenter.ITextViewVisibilitySwitch,
+        LoginViewPresenter.INavigatetoMVVMDatabinindingButtonEnableStateChanged,
         LoginViewPresenter.IUserCredentialsValidationService,
         LoginViewPresenter.IAuthenticationResult,
         LoginViewPresenter.IConfigureAndStatesOfBackendAuthenticationService {
@@ -32,11 +33,11 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
     protected EditText mETUserName = null;
     protected EditText mETUserPassword = null;
     protected Button mBtnLogin = null;
-    protected TextView mTextViewBackendResult = null;
+    protected TextView mTextViewBackendAuthenticationFeedBack = null;
     protected ProgressBar mProgressBarLoginInProgress = null;
     protected ConstraintLayout mMainContainer = null;
     protected Intent mIntentStartBackendAuthenticationService;
-
+    protected Button mBtnNavigateToMVVM = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,30 +49,33 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
     //#Implementation of Interfaces
 
     //#implementation of LoginViewPresenter.IObjectsInitializer
-    public ConstraintLayout onInitializingMainContainer() {
+    public ConstraintLayout onInitializingMainContainerConstraintLayout() {
         return this.mMainContainer = findViewById(R.id.constraintLayout);
     }
 
-    public EditText onInitializingETUserName() {
+    public EditText onInitializingUserNameEditText() {
         return this.mETUserName = findViewById(R.id.etUserName);
     }
 
-    public EditText onInitializingETUserPassword() {
+    public EditText onInitializingUserPasswordEditText() {
         return this.mETUserPassword = findViewById(R.id.etUserPassword);
     }
 
-    public Button onInitializingButtonLogin() {
+    public Button onInitializingLoginButton() {
         return this.mBtnLogin = findViewById(R.id.btnLogin);
     }
 
-    public TextView onInitializingTextViewForBackendResult() {
-        return this.mTextViewBackendResult = findViewById(R.id.tvBackendResult);
+    public TextView onInitializingForBackendResultTextView() {
+        return this.mTextViewBackendAuthenticationFeedBack = findViewById(R.id.tvBackendResult);
     }
 
-    public ProgressBar onInitializingProgressBar() {
+    public ProgressBar onInitializingWaitingForBackendToAuthenticateProgressBar() {
         return this.mProgressBarLoginInProgress = findViewById(R.id.progressBarLoginInProgress);
     }
 
+    public Button onInitializingNavigateToMVVMDataBindingButton() {
+        return this.mBtnNavigateToMVVM = findViewById(R.id.btnNavigateToMVVM_Databinding_v1);
+    }
     //#implementation of LoginViewPresenter.IProgressBarVisibilitySwitch
     @Override
     public void onProgressBarVisibilitySetToVisible() {
@@ -86,12 +90,12 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
     //#implementation of LoginViewPresenter.ITextViewVisibilitySwitch
     @Override
     public void onTextViewVisibilitySetToVisible() {
-        this.mTextViewBackendResult.setVisibility(View.VISIBLE);
+        this.mTextViewBackendAuthenticationFeedBack.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onTextViewVisibilitySetToGone() {
-        this.mTextViewBackendResult.setVisibility(View.GONE);
+        this.mTextViewBackendAuthenticationFeedBack.setVisibility(View.GONE);
     }
 
     //#implementation of LoginViewPresenter.ILoginButtonEnableState
@@ -114,6 +118,11 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
     @Override
     public void clearEditTextInputForPassword() {
         this.mETUserPassword.setText("");
+    }
+
+    @Override
+    public void clearBackendAuthenticationFeedbackTextView() {
+        this.mTextViewBackendAuthenticationFeedBack.setText("");
     }
 
     //#implementation of LoginViewPresenter.IUserCredentialsValidationService
@@ -157,17 +166,17 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
     //#implementation of LoginViewPresenter.IAuthenticationResult
     @Override
     public void onAuthenticationError(String resultMsg) {
-        this.mTextViewBackendResult.setText(resultMsg);
+        this.mTextViewBackendAuthenticationFeedBack.setText(resultMsg);
     }
 
     @Override
     public void onAuthenticationSuccessful(String resultMsg) {
-        this.mTextViewBackendResult.setText(resultMsg);
+        this.mTextViewBackendAuthenticationFeedBack.setText(resultMsg);
     }
 
     @Override
     public void onAuthenticationFailed(String resultMsg) {
-        this.mTextViewBackendResult.setText(resultMsg);
+        this.mTextViewBackendAuthenticationFeedBack.setText(resultMsg);
     }
 
     //#Lifcycle callbacks
@@ -232,5 +241,15 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
     @Override
     public void onStopBackendAuthenticationService() {
         this.stopService(this.mIntentStartBackendAuthenticationService);
+    }
+
+    @Override
+    public void enableNavigateToMVVMDataBindingButton() {
+        this.mBtnNavigateToMVVM.setEnabled(true);
+    }
+
+    @Override
+    public void disableNavigateToMVVMDataBindingButton() {
+        this.mBtnNavigateToMVVM.setEnabled(false);
     }
 }
