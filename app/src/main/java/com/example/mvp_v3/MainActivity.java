@@ -105,18 +105,18 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
     }
 
     @Override
-    public void onLoginButtonDisabled() {
+    public void disabledLoginButton() {
         this.mBtnLogin.setEnabled(false);
     }
 
     //#implementation of LoginViewPresenter.ILoginButtonClicked
     @Override
-    public void clearEditTextInputForUserName() {
+    public void clearUserNameEditText() {
         this.mETUserName.setText("");
     }
 
     @Override
-    public void clearEditTextInputForPassword() {
+    public void clearPasswordEditText() {
         this.mETUserPassword.setText("");
     }
 

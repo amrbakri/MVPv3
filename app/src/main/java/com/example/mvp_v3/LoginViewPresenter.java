@@ -52,12 +52,12 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
 
     interface ILoginButtonEnableState {
         void onLoginButtonEnabled();
-        void onLoginButtonDisabled();
+        void disabledLoginButton();
     }
 
     interface ILoginButtonClicked {
-        void clearEditTextInputForUserName();
-        void clearEditTextInputForPassword();
+        void clearUserNameEditText();
+        void clearPasswordEditText();
         void clearBackendAuthenticationFeedbackTextView();
     }
 
@@ -128,15 +128,14 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
         UserCredentialsValidationService userCredentialsValidationService = new UserCredentialsValidationService(this, userName, userPassword);
         if (userCredentialsValidationService.getCredentialsValidityStateTo() == true) {
             //do connect to backend for authenticating users' credentials
-            this.mMainActivityWeakReference.get().onLoginButtonDisabled();
-            this.mMainActivityWeakReference.get().clearEditTextInputForUserName();
-            this.mMainActivityWeakReference.get().clearEditTextInputForPassword();
+            this.mMainActivityWeakReference.get().disabledLoginButton();
+            this.mMainActivityWeakReference.get().clearUserNameEditText();
+            this.mMainActivityWeakReference.get().clearPasswordEditText();
             this.mMainActivityWeakReference.get().clearBackendAuthenticationFeedbackTextView();
             this.mMainActivityWeakReference.get().disableNavigateToMVVMDataBindingButton();
             this.mMainActivityWeakReference.get().onConfigureIntentForStartingBackendAuthenticationServiceWith(new LoginViewPresenter.MyResultReceiver(new Handler()));
             this.mMainActivityWeakReference.get().onStartBackendAuthenticationService();
             this.mMainActivityWeakReference.get().onProgressBarVisibilitySetToVisible();
-            this.mMainActivityWeakReference.get().clearBackendAuthenticationFeedbackTextView();
         }
     }
 
