@@ -91,7 +91,8 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
         void onStopBackendAuthenticationService();
     }
     interface IOnNavigateToMVVMDataBindingButtonClicked {
-        void startMVVMDataBindingV1Activity();
+        void configureIntentForStartingMVVMDataBindingV1Activity();
+        void starMVVMDataBindingV1Activity();
     }
 
     //#Constructor

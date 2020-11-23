@@ -3,7 +3,6 @@ package com.example.mvp_v3.loginScreen;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,7 +41,8 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
     protected TextView mTextViewBackendAuthenticationFeedBack = null;
     protected ProgressBar mProgressBarLoginInProgress = null;
     protected ConstraintLayout mMainContainer = null;
-    protected Intent mIntentStartBackendAuthenticationService;
+    protected Intent mIntentStartBackendAuthenticationService = null;
+    protected Intent mIntentStartMVVMDataBindingV1Activity = null;
     protected Button mBtnNavigateToMVVM = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -257,10 +257,16 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
         this.stopService(this.mIntentStartBackendAuthenticationService);
     }
 
+
     //#implementation of interface IOnNavigateToMVVMDataBindingButtonClicked
     @Override
-    public void startMVVMDataBindingV1Activity() {
-        //startActivity();
+    public void configureIntentForStartingMVVMDataBindingV1Activity() {
+        this.mIntentStartMVVMDataBindingV1Activity = new Intent();
+    }
+
+    @Override
+    public void starMVVMDataBindingV1Activity() {
+        startActivity(this.mIntentStartMVVMDataBindingV1Activity);
     }
 
     @Override
@@ -272,6 +278,5 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
     public void disableNavigateToMVVMDataBindingButton() {
         this.mBtnNavigateToMVVM.setEnabled(false);
     }
-
 
 }
