@@ -3,18 +3,17 @@ package enums;
 public enum AuthenticationResult {
     ERROR(0),
     SUCCESSFUL(1),
-    FAILED(2),
-    UNKNOWN(3);
+    FAILED(2);
 
     private String mResultName;
-    private int mResultNum;
+    private int mResultByNum;
 
     AuthenticationResult(int num) {
-        this.mResultNum = num;
+        this.mResultByNum = num;
     }
 
     public String bytName() {
-        switch (this.mResultNum) {
+        switch (this.mResultByNum) {
             case 0:
                 this.mResultName = "ERROR";
                 break;
@@ -24,15 +23,12 @@ public enum AuthenticationResult {
             case 2:
                 this.mResultName = "FAILED";
                 break;
-            case 3:
-                this.mResultName = "UNKNOWN";
-                break;
         }
         return this.mResultName;
     }
 
     public int byNum() {
-        return this.mResultNum;
+        return this.mResultByNum;
     }
 }
 
