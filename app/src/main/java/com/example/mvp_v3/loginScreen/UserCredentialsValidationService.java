@@ -1,4 +1,4 @@
-package com.example.mvp_v3;
+package com.example.mvp_v3.loginScreen;
 
 public class UserCredentialsValidationService {
 

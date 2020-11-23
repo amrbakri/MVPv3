@@ -1,4 +1,4 @@
-package com.example.mvp_v3;
+package com.example.mvp_v3.loginScreen;
 
 import android.app.Activity;
 import android.content.Context;
@@ -90,6 +90,9 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
         void onStartBackendAuthenticationService();
         void onStopBackendAuthenticationService();
     }
+    interface IOnNavigateToMVVMDataBindingButtonClicked {
+        void startMVVMDataBindingV1Activity();
+    }
 
     //#Constructor
     LoginViewPresenter(Context ctx) {
@@ -137,6 +140,11 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
             this.mMainActivityWeakReference.get().onStartBackendAuthenticationService();
             this.mMainActivityWeakReference.get().onProgressBarVisibilitySetToVisible();
         }
+    }
+
+
+    public void ongNavigateToMVVMDataBindingButtonClicked() {
+        //mMainActivityWeakReference.get().ongNavigateToMVVMDataBindingButtonClicked();
     }
 
     public void initializeObjects() {

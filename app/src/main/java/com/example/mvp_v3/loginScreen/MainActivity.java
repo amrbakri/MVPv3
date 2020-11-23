@@ -1,14 +1,17 @@
-package com.example.mvp_v3;
+package com.example.mvp_v3.loginScreen;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.mvp_v3.R;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -23,8 +26,11 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
         LoginViewPresenter.INavigatetoMVVMDatabinindingButtonEnableStateChanged,
         LoginViewPresenter.IUserCredentialsValidationService,
         LoginViewPresenter.IAuthenticationResult,
-        LoginViewPresenter.IConfigureAndStatesOfBackendAuthenticationService {
+        LoginViewPresenter.IConfigureAndStatesOfBackendAuthenticationService,
+        LoginViewPresenter.IOnNavigateToMVVMDataBindingButtonClicked
+{
 
+    private final static String TAG = MainActivity.class.getSimpleName();
     public final static String INTENT_KEY_START_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS = "KEY_BACKEND_SERVICE_FOR_AUTHENTICATION_PROCESS";
     public final static String INTENT_VALUE_COMMENCE_BACKEND_SERVICE_FOR_AUTHENTICATING_PROCESS = "VALUE_START_BACKEND_SERVICE_FOR_AUTHENTICATING_PROCESS";
 
@@ -207,7 +213,12 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
 
         this.mBtnNavigateToMVVM.setOnClickListener(view -> {
             Toast.makeText(getApplicationContext(), "CLICKED", Toast.LENGTH_SHORT).show();
+            ongNavigateToMVVMDataBindingButtonClicked();
         });
+    }
+
+    public void ongNavigateToMVVMDataBindingButtonClicked() {
+        mLoginViewPresenter.ongNavigateToMVVMDataBindingButtonClicked();
     }
 
     @Override
@@ -228,6 +239,7 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
         mLoginViewPresenter.onDestroy();
     }
 
+    //#implementation of interface IConfigureAndStatesOfBackendAuthenticationService
     @Override
     public void onConfigureIntentForStartingBackendAuthenticationServiceWith(ResultReceiver resultReceiver) {
         mIntentStartBackendAuthenticationService = new Intent(this, BackendAuthenticationService.class);
@@ -245,6 +257,12 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
         this.stopService(this.mIntentStartBackendAuthenticationService);
     }
 
+    //#implementation of interface IOnNavigateToMVVMDataBindingButtonClicked
+    @Override
+    public void startMVVMDataBindingV1Activity() {
+        //startActivity();
+    }
+
     @Override
     public void enableNavigateToMVVMDataBindingButton() {
         this.mBtnNavigateToMVVM.setEnabled(true);
@@ -254,4 +272,6 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
     public void disableNavigateToMVVMDataBindingButton() {
         this.mBtnNavigateToMVVM.setEnabled(false);
     }
+
+
 }

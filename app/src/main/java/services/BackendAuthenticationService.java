@@ -2,7 +2,6 @@ package services;
 
 import android.app.Activity;
 import android.app.IntentService;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,7 +11,7 @@ import android.os.Message;
 import android.os.ResultReceiver;
 import android.util.Log;
 
-import com.example.mvp_v3.MainActivity;
+import com.example.mvp_v3.loginScreen.MainActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.Random;
