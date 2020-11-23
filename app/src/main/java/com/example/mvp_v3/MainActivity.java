@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
 
     //#implementation of LoginViewPresenter.ITextViewVisibilitySwitch
     @Override
-    public void onTextViewVisibilitySetToVisible() {
+    public void changeBackendFeedBackTextViewToVisible() {
         this.mTextViewBackendAuthenticationFeedBack.setVisibility(View.VISIBLE);
     }
 
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
 
     //#implementation of LoginViewPresenter.ILoginButtonEnableState
     @Override
-    public void onLoginButtonEnabled() {
+    public void enableLoginButton() {
         this.mBtnLogin.setEnabled(true);
     }
 
@@ -198,13 +198,15 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
         this.mLoginViewPresenter.onResume();
         //to-do if not logging in activate
         //activateLoginButton();
-        this.mBtnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        this.mBtnLogin.setOnClickListener(v-> {
+
                 String userName = mETUserName.getText().toString();
                 String userPassword = mETUserPassword.getText().toString();
                 mLoginViewPresenter.validateUserCredentials(userName, userPassword);
-            }
+            });
+
+        this.mBtnNavigateToMVVM.setOnClickListener(view -> {
+            Toast.makeText(getApplicationContext(), "CLICKED", Toast.LENGTH_SHORT).show();
         });
     }
 
