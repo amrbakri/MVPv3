@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
         LoginViewPresenter.ILoginButtonEnableState,
         LoginViewPresenter.ILoginButtonClicked,
         LoginViewPresenter.ITextViewVisibilitySwitch,
-        LoginViewPresenter.INavigatetoMVVMDatabinindingButtonEnableStateChanged,
+        LoginViewPresenter.INavigatetoMVVMDatabininBingButtonEnableStateChanged,
         LoginViewPresenter.IUserCredentialsValidationService,
         LoginViewPresenter.IAuthenticationResult,
         LoginViewPresenter.IConfigureAndStatesOfBackendAuthenticationService,
@@ -269,6 +269,7 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
         startActivity(this.mIntentStartMVVMDataBindingV1Activity);
     }
 
+    //#implementation of interface INavigatetoMVVMDatabininBingButtonEnableStateChanged
     @Override
     public void enableNavigateToMVVMDataBindingButton() {
         this.mBtnNavigateToMVVM.setEnabled(true);

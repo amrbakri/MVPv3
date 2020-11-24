@@ -66,8 +66,7 @@ public class LoginViewPresenter implements UserCredentialsValidationService.IBac
         void onTextViewVisibilitySetToGone();
     }
 
-
-    interface INavigatetoMVVMDatabinindingButtonEnableStateChanged {
+    interface INavigatetoMVVMDatabininBingButtonEnableStateChanged {
         void enableNavigateToMVVMDataBindingButton();
         void disableNavigateToMVVMDataBindingButton();
     }
