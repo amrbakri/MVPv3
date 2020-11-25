@@ -1,4 +1,4 @@
-package com.example.mvp_v3.loginScreen;
+package com.example.mvp_v3.LoginScreen;
 
 import android.app.Activity;
 import android.content.Context;

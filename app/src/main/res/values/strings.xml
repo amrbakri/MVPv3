@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">MVP-v3</string>
     <string name="mainActivity_btnLabel_Login">Login</string>
-    <string name="mainActivity_btnLabel_NavigateToMVVM_Databindin_v1">Navigate to MVVM-databinding_v1</string>
+    <string name="mainActivity_btnLabel_NavigateToMVVM_Databindin_v1">Navigate to MVVM-dataBinding_v1</string>
+    <string name="button_1_label">button 1</string>
+    <string name="button_2_label">button 2</string>
+
 </resources>
