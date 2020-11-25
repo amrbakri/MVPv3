@@ -1,4 +1,4 @@
-package com.example.mvp_v3.loginScreen;
+package com.example.mvp_v3.LoginScreen;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
         LoginViewPresenter.ILoginButtonEnableState,
         LoginViewPresenter.ILoginButtonClicked,
         LoginViewPresenter.ITextViewVisibilitySwitch,
-        LoginViewPresenter.INavigatetoMVVMDatabininBingButtonEnableStateChanged,
+        LoginViewPresenter.INavigateToMVVMDataBindingButtonEnableStateChanged,
         LoginViewPresenter.IUserCredentialsValidationService,
         LoginViewPresenter.IAuthenticationResult,
         LoginViewPresenter.IConfigureAndStatesOfBackendAuthenticationService,
@@ -269,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements LoginViewPresente
         startActivity(this.mIntentStartMVVMDataBindingV1Activity);
     }
 
-    //#implementation of interface INavigatetoMVVMDatabininBingButtonEnableStateChanged
+    //#implementation of interface INavigateToMVVMDataBindingButtonEnableStateChanged
     @Override
     public void enableNavigateToMVVMDataBindingButton() {
         this.mBtnNavigateToMVVM.setEnabled(true);

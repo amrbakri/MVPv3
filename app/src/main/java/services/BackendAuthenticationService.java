@@ -11,7 +11,7 @@ import android.os.Message;
 import android.os.ResultReceiver;
 import android.util.Log;
 
-import com.example.mvp_v3.loginScreen.MainActivity;
+import com.example.mvp_v3.LoginScreen.MainActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.Random;
